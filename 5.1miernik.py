@@ -75,7 +75,6 @@ def juzCzas():
             return 2
         except ValueError:
             if czasy3 == datetime.datetime.now().strftime("%H:%M:%S"):
-                print("79")
                 czasy3 = 0
                 return 3
             else:
