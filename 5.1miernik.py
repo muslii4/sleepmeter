@@ -74,6 +74,7 @@ def juzCzas():
             print("lista 2")
             return 2
         except ValueError:
+            print("77")
             if czasy3 == datetime.datetime.now().strftime("%H:%M:%S"):
                 print("alarm sześciogodzinny")
                 czasy3 = 0
@@ -313,42 +314,84 @@ while True:
         b3.wait_for_inactive()
     else:
         jc = juzCzas()
-        if jc > 0 and not jc == 2:
-            if skip == False:
-                rl1.on()
-                bz2.on()
-                b1.wait_for_press()
-                bz2.off()
-                time.sleep(0.5)
-                b1.wait_for_inactive()
-                print("alarm wyłączony")
+        
+        if jc >= 0 :
+            if skip == True:
+                skip == False
+                print("pominięto #", jc)
                 time.sleep(1)
-                rl1.off()
             else:
-                skip = False
                 if jc == 1:
-                    print("alarm anulowany, pominięto (lista 1)")
-                elif jc == 3:
-                    print("pominięto alarm sześciogodzinny")
-                else:
-                    print("pominięto nieznany alarm")
-                time.sleep(1)
-            if jc == 1:
-                print("godzina odjazdu:", odjazdy[datetime.datetime.now().weekday()])
-        if juzCzas() == 2:
-            if skip == False:
-                while b1.is_pressed == 0:
-                    bz2.on()
                     rl1.on()
-                    time.sleep(1)
+                    bz2.on()
+                    b1.wait_for_press()
                     bz2.off()
-                    rl1.off()
                     time.sleep(0.5)
-                b1.wait_for_inactive()
-                rl1.on()
-                print("alarm wyłączony")
-                time.sleep(0.5)
-            else:
-                skip = False
-                print("alarm anulowany, pominięto (lista 2)")
-                time.sleep(1)
+                    b1.wait_for_inactive()
+                    print("alarm wyłączony")
+                    time.sleep(1)
+                    rl1.off()
+                elif jc == 2:
+                    while b1.is_pressed == 0:
+                        bz2.on()
+                        rl1.on()
+                        time.sleep(1)
+                        bz2.off()
+                        rl1.off()
+                        time.sleep(0.5)
+                    b1.wait_for_inactive()
+                    rl1.on()
+                    print("alarm wyłączony")
+                    time.sleep(1)
+                elif jc == 3:
+                    print("alarm sześciogodzinny")
+                    rl1.on()
+                    bz2.on()
+                    b1.wait_for_press()
+                    bz2.off()
+                    time.sleep(0.5)
+                    b1.wait_for_inactive()
+                    print("alarm wyłączony")
+                    time.sleep(1)
+                    rl1.off()
+                    czasy3 = 0
+
+        # if jc > 0 and not jc == 2:
+        #     if skip == False:
+        #         rl1.on()
+        #         bz2.on()
+        #         b1.wait_for_press()
+        #         bz2.off()
+        #         time.sleep(0.5)
+        #         b1.wait_for_inactive()
+        #         print("alarm wyłączony")
+        #         time.sleep(1)
+        #         rl1.off()
+        #     else:
+        #         skip = False
+        #         if jc == 1:
+        #             print("alarm anulowany, pominięto (lista 1)")
+        #         elif jc == 3:
+        #             print("pominięto alarm sześciogodzinny")
+        #         else:
+        #             print("pominięto nieznany alarm")
+        #         time.sleep(1)
+        #     if jc == 1:
+        #         print("godzina odjazdu:", odjazdy[datetime.datetime.now().weekday()])
+        # if juzCzas() == 2:
+        #     if skip == False:
+        #         while b1.is_pressed == 0:
+        #             bz2.on()
+        #             rl1.on()
+        #             time.sleep(1)
+        #             bz2.off()
+        #             rl1.off()
+        #             time.sleep(0.5)
+        #         b1.wait_for_inactive()
+        #         rl1.on()
+        #         print("alarm wyłączony")
+        #         time.sleep(0.5)
+        #     else:
+        #         skip = False
+        #         print("alarm anulowany, pominięto (lista 2)")
+        #         time.sleep(1)
