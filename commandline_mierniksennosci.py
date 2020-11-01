@@ -11,6 +11,8 @@ aStats = client.open("Sen").get_worksheet(1)
 aSny =  client.open("Sen").get_worksheet(2)
 undo = []
 
+print("mierniksennosci v1.3 commandline")
+
 def zasnij():
     czas = datetime.datetime.now().strftime("%H:%M:%S")
     data = datetime.datetime.now().strftime("%d.%m.%Y")
