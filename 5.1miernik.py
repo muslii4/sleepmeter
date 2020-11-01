@@ -346,12 +346,14 @@ while True:
                     print("alarm sześciogodzinny")
                     rl1.on()
                     bz2.on()
+                    time.sleep(1)
+                    print("350")
                     b1.wait_for_press()
                     bz2.off()
                     time.sleep(0.5)
                     b1.wait_for_inactive()
                     print("alarm wyłączony")
                     time.sleep(1)
-                    rl1.off()
+                    #rl1.off()
                     czasy3 = 0
                     
