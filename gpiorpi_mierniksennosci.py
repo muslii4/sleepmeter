@@ -14,9 +14,9 @@ skip = False
 jestZle = False
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
-loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/data/apikey.json", scope)
+loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/apikey.json", scope)
 
-print("mierniksennosci v5.1 gpiorpi")
+print("mierniksennosci v5.1")
 
 try:
     client = gspread.authorize(loginy)
@@ -35,9 +35,9 @@ rl1 = gpiozero.OutputDevice(23, False)
 
 czasy1 = ["1.07:50:00", "2.05:55:00", "3.06:50:00", "4.06:50:00", "5.09:10:00"]
 czasy2 = ["1.08:13:00", "2.06:24:00", "3.07:13:00", "4.07:13:00", "5.09:43:00"]
-czasy3 = 0
+czasy3 = ""
 odjazdy = ["08:25", "06:35", "07:25", "07:25", "09:55"]
-bufferPath = r"/home/pi/mierniksennosci/data/buffered.txt"
+sciezka = r"/home/pi/mierniksennosci/buffered.txt"
 
 def pisk(czas, powtorzenia, bz):
     for i in range(powtorzenia):
@@ -75,7 +75,6 @@ def juzCzas():
             return 2
         except ValueError:
             if czasy3 == datetime.datetime.now().strftime("%H:%M:%S"):
-                print("alarm sześciogodzinny")
                 czasy3 = 0
                 return 3
             else:
@@ -252,7 +251,7 @@ while True:
         if b1.is_pressed:
             print("sen sześciogodzinny")
             czasy3 = (datetime.datetime.now() + datetime.timedelta(hours=6,minutes=15)).strftime("%H:%M:%S")
-            print("alarm:", czasy3)
+            print(czasy3)
             pisk(0.1, 1, bz1)
         l1.on()
         print("zasnij")
@@ -292,7 +291,7 @@ while True:
             obudzsie(datetime.datetime.now().strftime("%H:%M:%S"))
             pisk(0.2, 2, bz1)
             print("pokazuję pogodę")
-            webbrowser.open_new_tab("/home/pi/mierniksennosci/data/index.html")
+            webbrowser.open_new_tab("/home/pi/mierniksennosci/index.html")
             time.sleep(30)
             print("zamykam pogodę")
             os.system("pkill -f chromium")
@@ -313,42 +312,46 @@ while True:
         b3.wait_for_inactive()
     else:
         jc = juzCzas()
-        if jc > 0 and not jc == 2:
-            if skip == False:
-                rl1.on()
-                bz2.on()
-                b1.wait_for_press()
-                bz2.off()
-                time.sleep(0.5)
-                b1.wait_for_inactive()
-                print("alarm wyłączony")
+        
+        if jc >= 0 :
+            if skip == True:
+                skip == False
+                print("pominięto #", jc)
                 time.sleep(1)
-                rl1.off()
             else:
-                skip = False
                 if jc == 1:
-                    print("alarm anulowany, pominięto (lista 1)")
-                elif jc == 3:
-                    print("pominięto alarm sześciogodzinny")
-                else:
-                    print("pominięto nieznany alarm")
-                time.sleep(1)
-            if jc == 1:
-                print("godzina odjazdu:", odjazdy[datetime.datetime.now().weekday()])
-        if juzCzas() == 2:
-            if skip == False:
-                while b1.is_pressed == 0:
-                    bz2.on()
                     rl1.on()
-                    time.sleep(1)
+                    bz2.on()
+                    b1.wait_for_press()
                     bz2.off()
-                    rl1.off()
                     time.sleep(0.5)
-                b1.wait_for_inactive()
-                rl1.on()
-                print("alarm wyłączony")
-                time.sleep(0.5)
-            else:
-                skip = False
-                print("alarm anulowany, pominięto (lista 2)")
-                time.sleep(1)
+                    b1.wait_for_inactive()
+                    print("alarm wyłączony")
+                    time.sleep(1)
+                    rl1.off()
+                elif jc == 2:
+                    while b1.is_pressed == 0:
+                        bz2.on()
+                        rl1.on()
+                        time.sleep(1)
+                        bz2.off()
+                        rl1.off()
+                        time.sleep(0.5)
+                    b1.wait_for_inactive()
+                    rl1.on()
+                    print("alarm wyłączony")
+                    time.sleep(1)
+                elif jc == 3:
+                    print("alarm sześciogodzinny")
+                    rl1.on()
+                    bz2.on()
+                    time.sleep(1)
+                    b1.wait_for_press()
+                    bz2.off()
+                    time.sleep(0.5)
+                    b1.wait_for_inactive()
+                    print("alarm wyłączony")
+                    time.sleep(1)
+                    rl1.off()
+                    czasy3 = 0
+                    
