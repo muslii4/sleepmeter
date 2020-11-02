@@ -313,9 +313,9 @@ while True:
     else:
         jc = juzCzas()
         
-        if jc >= 0 :
+        if jc > 0 :
             if skip == True:
-                skip == False
+                skip = False
                 print("pominięto #", jc)
                 time.sleep(1)
             else:
