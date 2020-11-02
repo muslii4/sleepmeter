@@ -14,9 +14,9 @@ skip = False
 jestZle = False
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
-loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/apikey.json", scope)
+loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/data/apikey.json", scope)
 
-print("mierniksennosci v5.1")
+print("mierniksennosci v5.2 gpiorpi")
 
 try:
     client = gspread.authorize(loginy)
@@ -37,7 +37,7 @@ czasy1 = ["1.07:50:00", "2.05:55:00", "3.06:50:00", "4.06:50:00", "5.09:10:00"]
 czasy2 = ["1.08:13:00", "2.06:24:00", "3.07:13:00", "4.07:13:00", "5.09:43:00"]
 czasy3 = ""
 odjazdy = ["08:25", "06:35", "07:25", "07:25", "09:55"]
-sciezka = r"/home/pi/mierniksennosci/buffered.txt"
+sciezka = r"/home/pi/mierniksennosci/data/buffered.txt"
 
 def pisk(czas, powtorzenia, bz):
     for i in range(powtorzenia):
@@ -291,7 +291,7 @@ while True:
             obudzsie(datetime.datetime.now().strftime("%H:%M:%S"))
             pisk(0.2, 2, bz1)
             print("pokazuję pogodę")
-            webbrowser.open_new_tab("/home/pi/mierniksennosci/index.html")
+            webbrowser.open_new_tab("/home/pi/mierniksennosci/data/index.html")
             time.sleep(30)
             print("zamykam pogodę")
             os.system("pkill -f chromium")
