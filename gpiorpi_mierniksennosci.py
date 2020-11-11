@@ -286,7 +286,7 @@ while True:
         pisk(0.1, 1, bz1)
         if connectionTest():
             while allBuffered == False:
-                print("nie wszystkie dane zostaly wpisane, ponawiam")
+                print("proba wpisania danych")
                 wpiszBuffer()
             obudzsie(datetime.datetime.now().strftime("%H:%M:%S"))
             pisk(0.2, 2, bz1)
@@ -300,7 +300,7 @@ while True:
             dopiszObudzsie()
             pisk(0.5, 1, bz1)    
         czasy3 = 0
-        print("zresetowano alarm sześciogodzinny")
+        print("zresetowano alarm nieregularny")
         l1.off()
         print("===============================")
         time.sleep(5)
@@ -342,7 +342,7 @@ while True:
                     print("alarm wyłączony")
                     time.sleep(1)
                 elif jc == 3:
-                    print("alarm sześciogodzinny")
+                    print("alarm nieregularny")
                     rl1.on()
                     bz2.on()
                     time.sleep(1)
@@ -354,4 +354,4 @@ while True:
                     time.sleep(1)
                     rl1.off()
                     czasy3 = 0
-                    
+                czasy3 = (datetime.datetime.now() + datetime.timedelta(minutes=3)).strftime("%H:%M:%S")
