@@ -37,7 +37,7 @@ czasy1 = ["1.07:50:00", "2.05:55:00", "3.06:50:00", "4.06:50:00", "5.09:10:00"]
 czasy2 = ["1.08:13:00", "2.06:24:00", "3.07:13:00", "4.07:13:00", "5.09:43:00"]
 czasy3 = ""
 odjazdy = ["08:25", "06:35", "07:25", "07:25", "09:55"]
-sciezka = r"/home/pi/mierniksennosci/data/buffered.txt"
+sciezka = r"/home/pi/mierniksennosci/data/buffer.txt"
 
 def pisk(czas, powtorzenia, bz):
     for i in range(powtorzenia):
