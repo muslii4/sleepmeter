@@ -262,7 +262,7 @@ while True:
         pisk(0.1, 1, bz1)
         if connectionTest():
             while allBuffered == False:
-                print("nie wszystkie dane zostaly wpisane, ponawiam")
+                print("próba wpisania danych")
                 wpiszBuffer()
             zasnij()
             pisk(0.2, 2, bz1)
