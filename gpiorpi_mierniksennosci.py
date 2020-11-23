@@ -12,6 +12,7 @@ import urllib3
 allBuffered = False
 skip = False
 jestZle = False
+dataObudzenia = ""
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/data/apikey.json", scope)
@@ -186,6 +187,7 @@ def zasnij():
         b1.wait_for_inactive()
 
 def obudzsie(czas):
+    global dataObudzenia
     try:
         wartosc = "=JEŻELI(D2-C2>=0; D2-C2; D2-C2+1)" #żeby nie było ujemnie, 1 = 24hs
         aDane.update_cell(2, 4, czas)
@@ -224,6 +226,8 @@ def obudzsie(czas):
     
     aDane.update_cell(2, 3, wartosc)
     print("zmieniono na " + aDane.cell(2, 3).value)
+    dataObudzenia = datetime.datetime.now().strftime("%d.%m")
+    print("[DEBUG] dataObudzenia = ", dataObudzenia) #debug
 
 rl1.off()
 l1.on()
@@ -318,6 +322,8 @@ while True:
                 skip = False
                 print("pominięto #", jc)
                 time.sleep(1)
+            elif datetime.datetime.now().strftime("%d.%m") == dataObudzenia:
+                print("alarm zbędny")
             else:
                 if jc == 1:
                     rl1.on()
@@ -354,4 +360,5 @@ while True:
                     time.sleep(1)
                     rl1.off()
                     czasy3 = 0
-                czasy3 = (datetime.datetime.now() + datetime.timedelta(minutes=3)).strftime("%H:%M:%S")
+                if datetime.datetime.now().strftime("%d.%m") != dataObudzenia:
+                    czasy3 = (datetime.datetime.now() + datetime.timedelta(minutes=3)).strftime("%H:%M:%S")
