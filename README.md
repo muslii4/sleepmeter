@@ -6,3 +6,5 @@ a i też jest funkcja budzika i pogody
 
 i prosze pamietac zeby wpisac cos do data/apikey.json
 to tak jakby co
+
+a cześć nie spodziewałem się gości
