@@ -65,7 +65,7 @@ def doSkip():
     b2.wait_for_inactive()
 
 def juzCzas():
-    global czasy3
+    global czasy3, czasy4
     try:
         print("index czasu:", czasy1.index(time.strftime("%u.%H:%M:%S")))
         print("lista 1")
