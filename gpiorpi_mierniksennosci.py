@@ -12,7 +12,7 @@ import urllib3
 allBuffered = False
 skip = False
 jestZle = False
-dataObudzenia = ""
+dataObudzenia = 0
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/data/apikey.json", scope)
@@ -36,7 +36,8 @@ rl1 = gpiozero.OutputDevice(23, False)
 
 czasy1 = ["1.07:50:00", "2.05:55:00", "3.06:50:00", "4.06:50:00", "5.09:10:00"]
 czasy2 = ["1.08:13:00", "2.06:24:00", "3.07:13:00", "4.07:13:00", "5.09:43:00"]
-czasy3 = ""
+czasy3 = 0
+czasy4 = 0
 odjazdy = ["08:25", "06:35", "07:25", "07:25", "09:55"]
 sciezka = r"/home/pi/mierniksennosci/data/buffer.txt"
 
@@ -79,7 +80,11 @@ def juzCzas():
                 czasy3 = 0
                 return 3
             else:
-                return 0
+                if czasy4 == datetime.datetime.now().strftime("%H:%M:%S"):
+                    czasy4 = 0
+                    return 4
+                else:
+                    return 0
             
 def dopiszZasnij():
     global allBuffered
@@ -304,7 +309,8 @@ while True:
             dopiszObudzsie()
             pisk(0.5, 1, bz1)    
         czasy3 = 0
-        print("zresetowano alarm nieregularny")
+        czasy4 = 0
+        print("zresetowano alarm nieregularny i sześciogodzinny")
         l1.off()
         print("===============================")
         time.sleep(5)
@@ -324,6 +330,8 @@ while True:
                 time.sleep(1)
             elif datetime.datetime.now().strftime("%d.%m") == dataObudzenia:
                 print("alarm zbędny")
+                czasy3 = 0
+                czasy4 = 0
             else:
                 if jc == 1:
                     rl1.on()
@@ -348,7 +356,7 @@ while True:
                     print("alarm wyłączony")
                     time.sleep(1)
                 elif jc == 3:
-                    print("alarm nieregularny")
+                    print("alarm sześciogodzinny")
                     rl1.on()
                     bz2.on()
                     time.sleep(1)
@@ -360,5 +368,18 @@ while True:
                     time.sleep(1)
                     rl1.off()
                     czasy3 = 0
+                elif jc == 4:
+                    print("alarm piętnastosekundowy")
+                    rl1.on()
+                    bz2.on()
+                    time.sleep(1)
+                    b1.wait_for_press()
+                    bz2.off()
+                    time.sleep(0.5)
+                    b1.wait_for_inactive()
+                    print("alarm wyłączony")
+                    time.sleep(1)
+                    rl1.off()
+                    czasy4 = 0
                 if datetime.datetime.now().strftime("%d.%m") != dataObudzenia:
-                    czasy3 = (datetime.datetime.now() + datetime.timedelta(minutes=3)).strftime("%H:%M:%S")
+                    czasy4 = (datetime.datetime.now() + datetime.timedelta(seconds=15)).strftime("%H:%M:%S")
