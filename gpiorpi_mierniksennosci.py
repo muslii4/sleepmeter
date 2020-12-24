@@ -14,6 +14,9 @@ skip = False
 jestZle = False
 dataObudzenia = 0
 
+holidaysStart = datetime.datetime(day=23,month=12,year=2020)
+holidaysEnd = datetime.datetime(day=20,month=1,year=2021)
+
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/data/apikey.json", scope)
 
@@ -327,6 +330,9 @@ while True:
             if skip == True:
                 skip = False
                 print("pominięto #", jc)
+                time.sleep(1)
+            elif holidaysStart <= datetime.datetime.now() <= holidaysEnd:
+                print("przerwę świąteczną se wymyślili")
                 time.sleep(1)
             elif datetime.datetime.now().strftime("%d.%m") == dataObudzenia:
                 czasy3 = 0
