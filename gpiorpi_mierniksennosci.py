@@ -329,7 +329,6 @@ while True:
                 print("pominięto #", jc)
                 time.sleep(1)
             elif datetime.datetime.now().strftime("%d.%m") == dataObudzenia:
-                print("alarm zbędny")
                 czasy3 = 0
                 czasy4 = 0
             else:
