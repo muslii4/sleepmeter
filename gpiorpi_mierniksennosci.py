@@ -6,16 +6,23 @@ import os
 import gpiozero
 import time
 import urllib3
+import random
 
 # sudo nano /etc/xdg/autostart/miernik.desktop
+
+time.sleep(5)
+
+budzikLinki = ["https://www.youtube.com/watch?v=Hy8kmNEo1i8", #scatman 
+               "https://www.youtube.com/watch?v=Jrl4bd0vkng"  #intaly
+               ]
 
 allBuffered = False
 skip = False
 jestZle = False
 dataObudzenia = 0
 
-holidaysStart = datetime.datetime(day=23,month=12,year=2020)
-holidaysEnd = datetime.datetime(day=20,month=1,year=2021)
+holidaysStart = datetime.datetime(day=29,month=12,year=2020)
+holidaysEnd = datetime.datetime(day=17,month=1,year=2021)
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/data/apikey.json", scope)
@@ -33,17 +40,42 @@ b1 = gpiozero.Button(17)
 b2 = gpiozero.Button(18)
 b3 = gpiozero.Button(4)
 l1 = gpiozero.LED(19)
-bz1 = gpiozero.Buzzer(21)
-bz2 = gpiozero.Buzzer(25)
+bz1 = gpiozero.Buzzer(21) #cichy
+bz2 = gpiozero.Buzzer(25) #glosny
 rl1 = gpiozero.OutputDevice(23, False)
 
-czasy1 = ["1.07:50:00", "2.05:55:00", "3.06:50:00", "4.06:50:00", "5.09:10:00"]
+czasy1 = ["1.07:50:00", "2.05:55:00", "3.06:50:00", "4.06:50:00", "5.09:10:00", "1.09:49:00"]
 czasy2 = ["1.08:13:00", "2.06:24:00", "3.07:13:00", "4.07:13:00", "5.09:43:00"]
 czasy3 = 0
 czasy4 = 0
 odjazdy = ["08:25", "06:35", "07:25", "07:25", "09:55"]
 sciezka = r"/home/pi/mierniksennosci/data/buffer.txt"
 
+def youtubowyBudzik():
+    global budzikLinki
+    rl1.on()
+    webbrowser.open_new_tab("http://www.hasthelargehadroncolliderdestroyedtheworldyet.com/")
+    time.sleep(2)
+    webbrowser.open_new_tab(budzikLinki[random.randint(0, len(budzikLinki) - 1)])
+    koniec = datetime.datetime.now() + datetime.timedelta(minutes=2)
+    while 1:
+        if datetime.datetime.now() >= koniec:
+            os.system("pkill -f chromium")
+            bz2.on()
+            b1.wait_for_press()
+            bz2.off()
+            time.sleep(0.5)
+            b1.wait_for_inactive()
+            print("alarm wyłączony")
+            time.sleep(1)
+            rl1.off()
+            break
+        elif b1.is_active == 1:
+            print("alarm wyłączony")
+            time.sleep(1)
+            rl1.off()
+            os.system("pkill -f chromium")
+            
 def pisk(czas, powtorzenia, bz):
     for i in range(powtorzenia):
         bz.on()
@@ -339,15 +371,7 @@ while True:
                 czasy4 = 0
             else:
                 if jc == 1:
-                    rl1.on()
-                    bz2.on()
-                    b1.wait_for_press()
-                    bz2.off()
-                    time.sleep(0.5)
-                    b1.wait_for_inactive()
-                    print("alarm wyłączony")
-                    time.sleep(1)
-                    rl1.off()
+                    youtubowyBudzik()
                 elif jc == 2:
                     while b1.is_pressed == 0:
                         bz2.on()
@@ -362,17 +386,7 @@ while True:
                     time.sleep(1)
                 elif jc == 3:
                     print("alarm sześciogodzinny")
-                    rl1.on()
-                    bz2.on()
-                    time.sleep(1)
-                    b1.wait_for_press()
-                    bz2.off()
-                    time.sleep(0.5)
-                    b1.wait_for_inactive()
-                    print("alarm wyłączony")
-                    time.sleep(1)
-                    rl1.off()
-                    czasy3 = 0
+                    youtubowyBudzik()
                 elif jc == 4:
                     print("alarm piętnastosekundowy")
                     rl1.on()
@@ -387,4 +401,4 @@ while True:
                     rl1.off()
                     czasy4 = 0
                 if datetime.datetime.now().strftime("%d.%m") != dataObudzenia:
-                    czasy4 = (datetime.datetime.now() + datetime.timedelta(seconds=15)).strftime("%H:%M:%S")
+                    czasy4 = (datetime.datetime.now() + datetime.timedelta(seconds=10)).strftime("%H:%M:%S")
