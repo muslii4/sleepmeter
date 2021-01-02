@@ -10,10 +10,17 @@ import random
 
 # sudo nano /etc/xdg/autostart/miernik.desktop
 
-time.sleep(5)
+time.sleep(10)
 
-budzikLinki = ["https://www.youtube.com/watch?v=Hy8kmNEo1i8", #scatman 
-               "https://www.youtube.com/watch?v=Jrl4bd0vkng"  #intaly
+budzikLinki = ["https://www.youtube.com/watch?v=Hy8kmNEo1i8", # scatman john - scatman
+               "https://www.youtube.com/watch?v=Jrl4bd0vkng", # senzawa - intaly
+               "https://www.youtube.com/watch?v=xJiaTpmeTX4", # su lee - wide awake
+               "https://www.youtube.com/watch?v=LOPCPUq9f_g", # su lee - ill just dance
+               "https://www.youtube.com/watch?v=-dkdi-tCEw0", # su lee - sleepy hollow
+               "https://www.youtube.com/watch?v=7kjjrEZOVHo", # su lee - slice of life
+               "https://www.youtube.com/watch?v=WVm_T4brjDg", # celf help - re: astro girl
+               "https://www.youtube.com/watch?v=Wjx6BPdlRzY", # kaz moon - centipede
+               "https://www.youtube.com/watch?v=bAgmGZ9iQ2Y"  # macintosh plus - floral shoppe
                ]
 
 allBuffered = False
@@ -363,7 +370,7 @@ while True:
                 skip = False
                 print("pominięto #", jc)
                 time.sleep(1)
-            elif holidaysStart <= datetime.datetime.now() <= holidaysEnd:
+            elif holidaysStart <= datetime.datetime.now() <= holidaysEnd and jc != 3:
                 print("przerwę świąteczną se wymyślili")
                 time.sleep(1)
             elif datetime.datetime.now().strftime("%d.%m") == dataObudzenia:
