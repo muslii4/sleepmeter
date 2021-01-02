@@ -370,7 +370,7 @@ while True:
                 skip = False
                 print("pominięto #", jc)
                 time.sleep(1)
-            elif holidaysStart <= datetime.datetime.now() <= holidaysEnd and jc != 3:
+            elif holidaysStart <= datetime.datetime.now() <= holidaysEnd and jc != 3 and jc != 4: # 6godzinne i 10sekundowe powinny dzialac w wakacje
                 print("przerwę świąteczną se wymyślili")
                 time.sleep(1)
             elif datetime.datetime.now().strftime("%d.%m") == dataObudzenia:
@@ -395,7 +395,7 @@ while True:
                     print("alarm sześciogodzinny")
                     youtubowyBudzik()
                 elif jc == 4:
-                    print("alarm piętnastosekundowy")
+                    print("alarm dziesięcio")
                     rl1.on()
                     bz2.on()
                     time.sleep(1)
