@@ -13,14 +13,17 @@ import random
 time.sleep(10)
 
 budzikLinki = ["https://www.youtube.com/watch?v=Hy8kmNEo1i8", # scatman john - scatman
-               "https://www.youtube.com/watch?v=Jrl4bd0vkng", # senzawa - intaly
                "https://www.youtube.com/watch?v=xJiaTpmeTX4", # su lee - wide awake
                "https://www.youtube.com/watch?v=LOPCPUq9f_g", # su lee - ill just dance
                "https://www.youtube.com/watch?v=-dkdi-tCEw0", # su lee - sleepy hollow
                "https://www.youtube.com/watch?v=7kjjrEZOVHo", # su lee - slice of life
                "https://www.youtube.com/watch?v=WVm_T4brjDg", # celf help - re: astro girl
                "https://www.youtube.com/watch?v=Wjx6BPdlRzY", # kaz moon - centipede
-               "https://www.youtube.com/watch?v=bAgmGZ9iQ2Y"  # macintosh plus - floral shoppe
+               "https://www.youtube.com/watch?v=bAgmGZ9iQ2Y", # macintosh plus - floral shoppe
+               "https://www.youtube.com/watch?v=c8IUg3oNIco", # lexie liu - ALTGR
+               "https://www.youtube.com/watch?v=e2qG5uwDCW4", # jack stauber - buttercup
+               "https://www.youtube.com/watch?v=TaySTpSqhdA", # jules gaia - wild side
+               "https://www.youtube.com/watch?v=r30D3SW4OVw"  # maurice ravel - bolero
                ]
 
 allBuffered = False
@@ -68,10 +71,16 @@ def youtubowyBudzik():
     while 1:
         if datetime.datetime.now() >= koniec:
             os.system("pkill -f chromium")
-            bz2.on()
-            b1.wait_for_press()
-            bz2.off()
-            time.sleep(0.5)
+            pisk(0.1, 2, bz2)
+            koniec = datetime.datetime.now() + datetime.timedelta(seconds=3)
+            while datetime.datetime.now() <= koniec:
+                if b1.is_active:
+                    break
+            if not b1.is_active:
+                bz2.on()
+                b1.wait_for_press()
+                bz2.off()
+                time.sleep(0.5)
             b1.wait_for_inactive()
             print("alarm wyłączony")
             time.sleep(1)
@@ -82,6 +91,7 @@ def youtubowyBudzik():
             time.sleep(1)
             rl1.off()
             os.system("pkill -f chromium")
+            break
             
 def pisk(czas, powtorzenia, bz):
     for i in range(powtorzenia):
