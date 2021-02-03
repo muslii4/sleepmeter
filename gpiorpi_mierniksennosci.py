@@ -23,7 +23,8 @@ budzikLinki = ["https://www.youtube.com/watch?v=Hy8kmNEo1i8", # scatman john - s
                "https://www.youtube.com/watch?v=c8IUg3oNIco", # lexie liu - ALTGR
                "https://www.youtube.com/watch?v=e2qG5uwDCW4", # jack stauber - buttercup
                "https://www.youtube.com/watch?v=TaySTpSqhdA", # jules gaia - wild side
-               "https://www.youtube.com/watch?v=r30D3SW4OVw"  # maurice ravel - bolero
+               "https://www.youtube.com/watch?v=r30D3SW4OVw", # maurice ravel - bolero
+               "https://www.youtube.com/watch?v=uGx2rul46gk"  # underscores - second hand embarassment
                ]
 
 allBuffered = False
