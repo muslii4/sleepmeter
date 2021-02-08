@@ -62,7 +62,7 @@ czasy4 = 0
 odjazdy = ["08:25", "06:35", "07:25", "07:25", "09:55"]
 sciezka = r"/home/pi/mierniksennosci/data/buffer.txt"
 
-def youtubowyBudzik():
+def youtubowyBudzik(jc):
     global budzikLinki
     rl1.on()
     webbrowser.open_new_tab("http://www.hasthelargehadroncolliderdestroyedtheworldyet.com/")
@@ -73,7 +73,8 @@ def youtubowyBudzik():
         if datetime.datetime.now() >= koniec:
             os.system("pkill -f chromium")
             pisk(0.1, 2, bz2)
-            koniec = datetime.datetime.now() + datetime.timedelta(seconds=3)
+            if jc != 3:
+                koniec = datetime.datetime.now() + datetime.timedelta(seconds=3)
             while datetime.datetime.now() <= koniec:
                 if b1.is_active:
                     break
@@ -404,7 +405,7 @@ while True:
                     time.sleep(1)
                 elif jc == 3:
                     print("alarm sześciogodzinny")
-                    youtubowyBudzik()
+                    youtubowyBudzik(3)
                 elif jc == 4:
                     print("alarm dziesięcio")
                     rl1.on()
