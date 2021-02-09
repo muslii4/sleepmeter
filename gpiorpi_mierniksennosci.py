@@ -390,7 +390,7 @@ while True:
                 czasy4 = 0
             else:
                 if jc == 1:
-                    youtubowyBudzik()
+                    youtubowyBudzik(jc)
                 elif jc == 2:
                     while b1.is_pressed == 0:
                         bz2.on()
@@ -405,7 +405,7 @@ while True:
                     time.sleep(1)
                 elif jc == 3:
                     print("alarm sześciogodzinny")
-                    youtubowyBudzik(3)
+                    youtubowyBudzik(jc)
                 elif jc == 4:
                     print("alarm dziesięcio")
                     rl1.on()
