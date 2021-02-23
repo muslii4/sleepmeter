@@ -40,6 +40,13 @@ loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksenn
 
 print("mierniksennosci v5.3 gpiorpi")
 
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+ser.flush()
+
+ser.write("255255255").encode())
+line = ser.readline().decode('utf-8').rstrip()
+print(line)
+
 try:
     client = gspread.authorize(loginy)
     aDane = client.open("Sen").sheet1
@@ -62,9 +69,15 @@ czasy4 = 0
 odjazdy = ["08:25", "06:35", "07:25", "07:25", "09:55"]
 sciezka = r"/home/pi/mierniksennosci/data/buffer.txt"
 
+def ledkolor(kolor):
+    ser.write(kolor.encode())
+    line = ser.readline().decode('utf-8').rstrip()
+    print(line)
+
 def youtubowyBudzik(jc):
     global budzikLinki
     rl1.on()
+    ledkolor("056232255")
     webbrowser.open_new_tab("http://www.hasthelargehadroncolliderdestroyedtheworldyet.com/")
     time.sleep(2)
     webbrowser.open_new_tab(budzikLinki[random.randint(0, len(budzikLinki) - 1)])
@@ -79,19 +92,23 @@ def youtubowyBudzik(jc):
                 if b1.is_active:
                     break
             if not b1.is_active:
+                ledkolor("255000000")
                 bz2.on()
                 b1.wait_for_press()
+                ledkolor("056232255")
                 bz2.off()
                 time.sleep(0.5)
             b1.wait_for_inactive()
             print("alarm wyłączony")
             time.sleep(1)
             rl1.off()
+            ledkolor("000000000")
             break
         elif b1.is_active == 1:
             print("alarm wyłączony")
             time.sleep(1)
             rl1.off()
+            ledkolor("000000000")
             os.system("pkill -f chromium")
             break
             
@@ -317,6 +334,7 @@ while True:
             print(czasy3)
             pisk(0.1, 1, bz1)
         l1.on()
+        ledkolor("173088014")
         print("zasnij")
         pisk(0.1, 1, bz1)
         if connectionTest():
@@ -327,6 +345,7 @@ while True:
             pisk(0.2, 2, bz1)
         else:
             print("połączenie sieciowe niedostępne, zapisywanie w pamięci")
+            ledkolor("056232255")
             dopiszZasnij()
             pisk(0.5, 1, bz1)
         l1.off()
@@ -335,6 +354,7 @@ while True:
         print("===============================")
         time.sleep(5)
         rl1.off()
+        ledkolor("000000000")
     elif b2.is_pressed:
         rl1.on()
         time.sleep(0.5)
@@ -345,6 +365,7 @@ while True:
             rl1.off()
             continue
         l1.on()
+        ledkolor("056232255")
         print("obudzsie")
         pisk(0.1, 1, bz1)
         if connectionTest():
@@ -360,6 +381,7 @@ while True:
             os.system("pkill -f chromium")
         else:
             print("połączenie sieciowe niedostępne, zapisywanie w pamięci")
+            ledkolor("255000000")
             dopiszObudzsie()
             pisk(0.5, 1, bz1)    
         czasy3 = 0
@@ -369,9 +391,13 @@ while True:
         print("===============================")
         time.sleep(5)
         rl1.off()
+        ledkolor("000000000")
     elif b3.is_pressed:
-        print("b3")
         rl1.toggle()
+        if rl1.is_active:
+            ledkolor("255255255")
+        else:
+            ledkolor("000000000")
         time.sleep(0.5)
         b3.wait_for_inactive()
     else:
@@ -383,7 +409,7 @@ while True:
                 print("pominięto #", jc)
                 time.sleep(1)
             elif holidaysStart <= datetime.datetime.now() <= holidaysEnd and jc != 3 and jc != 4: # 6godzinne i 10sekundowe powinny dzialac w wakacje
-                print("przerwę świąteczną se wymyślili")
+                print("wakacje")
                 time.sleep(1)
             elif datetime.datetime.now().strftime("%d.%m") == dataObudzenia:
                 czasy3 = 0
@@ -392,6 +418,7 @@ while True:
                 if jc == 1:
                     youtubowyBudzik(jc)
                 elif jc == 2:
+                    ledkolor("255000000")
                     while b1.is_pressed == 0:
                         bz2.on()
                         rl1.on()
@@ -403,11 +430,14 @@ while True:
                     rl1.on()
                     print("alarm wyłączony")
                     time.sleep(1)
+                    rl1.off()
+                    ledkolor("000000000")
                 elif jc == 3:
                     print("alarm sześciogodzinny")
                     youtubowyBudzik(jc)
                 elif jc == 4:
                     print("alarm dziesięcio")
+                    ledkolor("255000000")
                     rl1.on()
                     bz2.on()
                     time.sleep(1)
@@ -418,6 +448,7 @@ while True:
                     print("alarm wyłączony")
                     time.sleep(1)
                     rl1.off()
+                    ledkolor("000000000")
                     czasy4 = 0
-                if datetime.datetime.now().strftime("%d.%m") != dataObudzenia:
+                if datetime.datetime.now().strftime("%d.%m") != dataObudzenia and jc != 3: #6godzinne można odpuścić bo potem nie działają inne
                     czasy4 = (datetime.datetime.now() + datetime.timedelta(seconds=10)).strftime("%H:%M:%S")
