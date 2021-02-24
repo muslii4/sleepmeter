@@ -7,6 +7,7 @@ import gpiozero
 import time
 import urllib3
 import random
+import serial
 
 # sudo nano /etc/xdg/autostart/miernik.desktop
 
@@ -43,7 +44,7 @@ print("mierniksennosci v5.3 gpiorpi")
 ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
 ser.flush()
 
-ser.write("255255255").encode())
+ser.write("255255255".encode())
 line = ser.readline().decode('utf-8').rstrip()
 print(line)
 
@@ -51,7 +52,7 @@ try:
     client = gspread.authorize(loginy)
     aDane = client.open("Sen").sheet1
 except:
-    print("Brak połączenia sieciowego, program zostanie uruchomiony w trybie offline")
+    print("Brak polaczenia sieciowego, program zostanie uruchomiony w trybie offline")
     jestZle = True
 
 b1 = gpiozero.Button(17)
@@ -99,13 +100,13 @@ def youtubowyBudzik(jc):
                 bz2.off()
                 time.sleep(0.5)
             b1.wait_for_inactive()
-            print("alarm wyłączony")
+            print("alarm wylaczony")
             time.sleep(1)
             rl1.off()
             ledkolor("000000000")
             break
         elif b1.is_active == 1:
-            print("alarm wyłączony")
+            print("alarm wylaczony")
             time.sleep(1)
             rl1.off()
             ledkolor("000000000")
@@ -128,9 +129,9 @@ def doSkip():
     global skip
     skip = not skip
     if skip:
-        print("pominięto następny alarm. aby anulować pominięcie naciśnij przyciski jeszcze raz.")
+        print("pominieto nastepny alarm. aby anulowac pominiecie nacisnij przyciski jeszcze raz.")
     else:
-        print("anulowano nadchodzące pominięcie")
+        print("anulowano nadchodzace pominiecie")
     time.sleep(0.2)
     b1.wait_for_inactive()
     b2.wait_for_inactive()
@@ -219,7 +220,7 @@ def wpiszBuffer():
                 f4.writelines(content[2:])
     if content:
         if content[0].rstrip("\n") != "obudzsie" and content[0].rstrip("\n") != "zasnij":
-            print("Nieprawidłowa linia: ", content[0], "\nusuwanie")
+            print("Nieprawidlowa linia: ", content[0], "\nusuwanie")
             with open(sciezka, "r+") as f5:
                 content = f5.readlines()
                 f5.truncate(0)
@@ -236,13 +237,13 @@ def connectionTest():
     global jestZle, aDane, client
     if jestZle:
         try:
-            print("rozpoczynanie próby nawiązania połączenia")
+            print("rozpoczynanie proby nawiazania polaczenia")
             client = gspread.authorize(loginy)
             aDane = client.open("Sen").sheet1
             jestZle = False
-            print("próba udana")
+            print("proba udana")
         except:
-            print("próba nieudana")
+            print("proba nieudana")
             return False
     try:
         url = "https://www.google.com/"
@@ -265,17 +266,17 @@ def zasnij():
 def obudzsie(czas):
     global dataObudzenia
     try:
-        wartosc = "=JEŻELI(D2-C2>=0; D2-C2; D2-C2+1)" #żeby nie było ujemnie, 1 = 24hs
+        wartosc = "=IF(D2-C2>=0; D2-C2; D2-C2+1)" #zeby nie bylo ujemnie, 1 = 24hs
         aDane.update_cell(2, 4, czas)
         aDane.update_cell(2, 5, wartosc)
-        wartosc = "=JEŻELI(B2<=0,5;B2+1;B2)"
+        wartosc = "=IF(B2<=0,5;B2+1;B2)"
         aDane.update_cell(2, 6, wartosc)
-        wartosc = "=JEŻELI(C2<=0,5;C2+1;C2)"
+        wartosc = "=IF(C2<=0,5;C2+1;C2)"
         aDane.update_cell(2, 7, wartosc)
-        wartosc = "=JEŻELI(B2>0,5;A2;A2-1)"
+        wartosc = "=IF(B2>0,5;A2;A2-1)"
         aDane.update_cell(2, 8, wartosc)
         print(aDane.row_values(2))
-        print("Godzina łóżkowania: " + aDane.cell(2, 2).value)
+        print("Godzina lozkowania: " + aDane.cell(2, 2).value)
         komorka = aDane.cell(2, 2).value
 
         godzina = ""
@@ -329,7 +330,7 @@ while True:
             rl1.off()
             continue
         if b1.is_pressed:
-            print("sen sześciogodzinny")
+            print("sen szesciogodzinny")
             czasy3 = (datetime.datetime.now() + datetime.timedelta(hours=6,minutes=15)).strftime("%H:%M:%S")
             print(czasy3)
             pisk(0.1, 1, bz1)
@@ -339,12 +340,12 @@ while True:
         pisk(0.1, 1, bz1)
         if connectionTest():
             while allBuffered == False:
-                print("próba wpisania danych")
+                print("proba wpisania danych")
                 wpiszBuffer()
             zasnij()
             pisk(0.2, 2, bz1)
         else:
-            print("połączenie sieciowe niedostępne, zapisywanie w pamięci")
+            print("polaczenie sieciowe niedostepne, zapisywanie w pamieci")
             ledkolor("056232255")
             dopiszZasnij()
             pisk(0.5, 1, bz1)
@@ -374,19 +375,19 @@ while True:
                 wpiszBuffer()
             obudzsie(datetime.datetime.now().strftime("%H:%M:%S"))
             pisk(0.2, 2, bz1)
-            print("pokazuję pogodę")
+            print("pokazuje pogode")
             webbrowser.open_new_tab("/home/pi/mierniksennosci/data/index.html")
             time.sleep(30)
-            print("zamykam pogodę")
+            print("zamykam pogode")
             os.system("pkill -f chromium")
         else:
-            print("połączenie sieciowe niedostępne, zapisywanie w pamięci")
+            print("polaczenie sieciowe niedostepne, zapisywanie w pamieci")
             ledkolor("255000000")
             dopiszObudzsie()
             pisk(0.5, 1, bz1)    
         czasy3 = 0
         czasy4 = 0
-        print("zresetowano alarm nieregularny i sześciogodzinny")
+        print("zresetowano alarm nieregularny i szesciogodzinny")
         l1.off()
         print("===============================")
         time.sleep(5)
@@ -406,7 +407,7 @@ while True:
         if jc > 0 :
             if skip == True:
                 skip = False
-                print("pominięto #", jc)
+                print("pominieto #", jc)
                 time.sleep(1)
             elif holidaysStart <= datetime.datetime.now() <= holidaysEnd and jc != 3 and jc != 4: # 6godzinne i 10sekundowe powinny dzialac w wakacje
                 print("wakacje")
@@ -428,15 +429,15 @@ while True:
                         time.sleep(0.5)
                     b1.wait_for_inactive()
                     rl1.on()
-                    print("alarm wyłączony")
+                    print("alarm wylaczony")
                     time.sleep(1)
                     rl1.off()
                     ledkolor("000000000")
                 elif jc == 3:
-                    print("alarm sześciogodzinny")
+                    print("alarm szesciogodzinny")
                     youtubowyBudzik(jc)
                 elif jc == 4:
-                    print("alarm dziesięcio")
+                    print("alarm dziesiecio")
                     ledkolor("255000000")
                     rl1.on()
                     bz2.on()
@@ -445,10 +446,10 @@ while True:
                     bz2.off()
                     time.sleep(0.5)
                     b1.wait_for_inactive()
-                    print("alarm wyłączony")
+                    print("alarm wylaczony")
                     time.sleep(1)
                     rl1.off()
                     ledkolor("000000000")
                     czasy4 = 0
-                if datetime.datetime.now().strftime("%d.%m") != dataObudzenia and jc != 3: #6godzinne można odpuścić bo potem nie działają inne
+                if datetime.datetime.now().strftime("%d.%m") != dataObudzenia and jc != 3: #6godzinne mozna odpuscic bo potem nie dzialaja inne
                     czasy4 = (datetime.datetime.now() + datetime.timedelta(seconds=10)).strftime("%H:%M:%S")
