@@ -41,12 +41,26 @@ loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksenn
 
 print("mierniksennosci v5.3 gpiorpi")
 
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+ser = serial.Serial('/dev/ttyUSB1', 9600, timeout=1)
 ser.flush()
 
-ser.write("255255255".encode())
+ser.write("255000000".encode())
 line = ser.readline().decode('utf-8').rstrip()
 print(line)
+time.sleep(1)
+ser.write("000255000".encode())
+line = ser.readline().decode('utf-8').rstrip()
+print(line)
+time.sleep(1)
+ser.write("000000255".encode())
+line = ser.readline().decode('utf-8').rstrip()
+print(line)
+time.sleep(1)
+ser.write("000000000".encode())
+line = ser.readline().decode('utf-8').rstrip()
+print(line)
+
+
 
 try:
     client = gspread.authorize(loginy)
