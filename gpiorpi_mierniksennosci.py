@@ -37,7 +37,7 @@ holidaysStart = datetime.datetime(day=29,month=12,year=2020)
 holidaysEnd = datetime.datetime(day=17,month=1,year=2021)
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
-loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/data/apikey.json", scope)
+loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/apikey.json", scope)
 
 print("mierniksennosci v5.3 gpiorpi")
 
