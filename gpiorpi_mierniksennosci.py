@@ -41,7 +41,7 @@ loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksenn
 
 print("mierniksennosci v5.3 gpiorpi")
 
-ser = serial.Serial('/dev/ttyUSB1', 9600, timeout=1)
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
 ser.flush()
 
 ser.write("255255255".encode())
