@@ -11,7 +11,7 @@ import serial
 
 # sudo nano /etc/xdg/autostart/miernik.desktop
 
-time.sleep(10)
+#time.sleep(10)
 
 budzikLinki = ["https://www.youtube.com/watch?v=Hy8kmNEo1i8", # scatman john - scatman
                "https://www.youtube.com/watch?v=xJiaTpmeTX4", # su lee - wide awake
@@ -41,7 +41,7 @@ loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksenn
 
 print("mierniksennosci v5.3 gpiorpi")
 
-ser = serial.Serial('/dev/ttyUSB1', 9600, timeout=1)
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
 ser.flush()
 
 ser.write("255255255".encode())
@@ -79,6 +79,7 @@ b3 = gpiozero.Button(4)
 l1 = gpiozero.LED(19)
 bz1 = gpiozero.Buzzer(21) #cichy
 bz2 = gpiozero.Buzzer(25) #glosny
+#bz1 = bz2
 rl1 = gpiozero.OutputDevice(23, False)
 
 czasy1 = ["1.07:50:00", "2.05:55:00", "3.06:50:00", "4.06:50:00", "5.09:10:00", "1.09:49:00"]
@@ -386,7 +387,7 @@ while True:
         l1.on()
         ledkolor("056232255")
         print("obudzsie")
-        pisk(0.1, 1, bz1)
+        pisk(0.1, 1, bz2)
         if connectionTest():
             while allBuffered == False:
                 print("proba wpisania danych")
