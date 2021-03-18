@@ -426,13 +426,17 @@ while True:
     elif b3.is_pressed:
         rl1.toggle()
         if rl1.is_active:
-            ledkolor("255255255")
+            ledkolor(whiteTone())
         else:
             ledkolor("000000000")
         time.sleep(0.5)
         if b3.is_pressed:
-            kolor = input("Wpisz kolor (255255255): ")
-            ledkolor(input)
+            if not rl1.is_active:
+                time.sleep(0.5)
+                ledkolor(whiteTone())
+                rl1.on()
+            selcolor = input("Wpisz kolor (255255255): ")
+            ledkolor(str(selcolor))
     else:
         jc = juzCzas()
         
