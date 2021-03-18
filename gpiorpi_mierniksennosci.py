@@ -8,6 +8,8 @@ import time
 import urllib3
 import random
 import serial
+import suntime
+import pytz
 
 # sudo nano /etc/xdg/autostart/miernik.desktop
 
@@ -35,6 +37,12 @@ dataObudzenia = 0
 
 holidaysStart = datetime.datetime(day=29,month=12,year=2020)
 holidaysEnd = datetime.datetime(day=17,month=1,year=2021)
+
+lat = 49.8
+lon = 19
+sun = suntime.Sun(lat, lon)
+
+utc = pytz.UTC
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/apikey.json", scope)
@@ -64,8 +72,6 @@ ser.write("000000000".encode())
 line = ser.readline().decode('utf-8').rstrip()
 print(line)
 
-
-
 try:
     client = gspread.authorize(loginy)
     aDane = client.open("Sen").sheet1
@@ -79,7 +85,6 @@ b3 = gpiozero.Button(4)
 l1 = gpiozero.LED(19)
 bz1 = gpiozero.Buzzer(21) #cichy
 bz2 = gpiozero.Buzzer(25) #glosny
-#bz1 = bz2
 rl1 = gpiozero.OutputDevice(23, False)
 
 czasy1 = ["1.07:50:00", "2.05:55:00", "3.06:50:00", "4.06:50:00", "5.09:10:00", "1.09:49:00"]
@@ -88,6 +93,12 @@ czasy3 = 0
 czasy4 = 0
 odjazdy = ["08:25", "06:35", "07:25", "07:25", "09:55"]
 sciezka = r"/home/pi/mierniksennosci/data/buffer.txt"
+
+def whiteTone():
+    if sun.get_local_sunrise_time() < utc.localize(datetime.datetime.now()) < sun.get_local_sunset_time(): # czy jest miedzy wschodem a zachodem slonca
+        return "255255255" # bardzo bialy
+    else:
+        return "173088014" # cieply bialy
 
 def ledkolor(kolor):
     ser.write(kolor.encode())
@@ -419,7 +430,9 @@ while True:
         else:
             ledkolor("000000000")
         time.sleep(0.5)
-        b3.wait_for_inactive()
+        if b3.is_pressed:
+            kolor = input("Wpisz kolor (255255255): ")
+            ledkolor(input)
     else:
         jc = juzCzas()
         
