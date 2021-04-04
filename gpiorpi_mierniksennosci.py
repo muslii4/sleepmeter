@@ -297,9 +297,9 @@ def obudzsie(czas, sztuczne):
     global dataObudzenia
 
     if not sztuczne:
-        n = input("podaj dzisiejsza liczbe: ")
+        n = str(input("podaj dzisiejsza liczbe: "))
         while n != str(((datetime.datetime.now().timetuple().tm_yday + 1) ** 20))[:6]:
-            n = input("podaj dzisiejsza liczbe: ")
+            n = str(input("podaj dzisiejsza liczbe: "))
 
     try:
         wartosc = "=IF(D2-C2>=0; D2-C2; D2-C2+1)" #zeby nie bylo ujemnie, 1 = 24hs
