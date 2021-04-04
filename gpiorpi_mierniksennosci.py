@@ -244,7 +244,7 @@ def wpiszBuffer():
     if content:
         if content[0].rstrip("\n") == "obudzsie":
             print("wpisuje element: obudzsie")
-            obudzsie(content[1])    
+            obudzsie(content[1], True)    
             with open(sciezka,"w") as f4:
                 f4.truncate(0)
                 f4.writelines(content[2:])
@@ -293,8 +293,14 @@ def zasnij():
         time.sleep(0.5)
         b1.wait_for_inactive()
 
-def obudzsie(czas):
+def obudzsie(czas, sztuczne):
     global dataObudzenia
+
+    if not sztuczne:
+        n = input("podaj dzisiejsza liczbe: ")
+        while n != str(((datetime.datetime.now().timetuple().tm_yday + 1) ** 20))[:6]:
+            n = input("podaj dzisiejsza liczbe: ")
+
     try:
         wartosc = "=IF(D2-C2>=0; D2-C2; D2-C2+1)" #zeby nie bylo ujemnie, 1 = 24hs
         aDane.update_cell(2, 4, czas)
@@ -403,7 +409,7 @@ while True:
             while allBuffered == False:
                 print("proba wpisania danych")
                 wpiszBuffer()
-            obudzsie(datetime.datetime.now().strftime("%H:%M:%S"))
+            obudzsie(datetime.datetime.now().strftime("%H:%M:%S"), False)
             pisk(0.2, 2, bz1)
             print("pokazuje pogode")
             webbrowser.open_new_tab("/home/pi/mierniksennosci/data/index.html")
