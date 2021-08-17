@@ -296,7 +296,7 @@ def zasnij():
 def obudzsie(czas, sztuczne):
     global dataObudzenia
 
-    if not sztuczne and len(sys.argv) >= 2: # dowolny argument to wylacza
+    if not sztuczne and len(sys.argv) < 2: # dowolny argument to wylacza
         bz2.on()
         n = str(input("podaj dzisiejsza liczbe: "))
         while n != str(((datetime.datetime.now().timetuple().tm_yday + 1) ** 20))[:6]:
