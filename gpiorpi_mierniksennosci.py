@@ -1,10 +1,13 @@
+import time
+
+time.sleep(5)
+
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import datetime
 import webbrowser
 import os
 import gpiozero
-import time
 import urllib3
 import random
 import serial
