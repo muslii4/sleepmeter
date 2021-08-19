@@ -100,11 +100,11 @@ odjazdy = ["08:25", "06:35", "07:25", "07:25", "09:55"]
 sciezka = r"/home/pi/mierniksennosci/data/buffer.txt"
 
 def checkColor():
-    global kolor
+    global setColor
     with open(r"/var/lib/docker/volumes/homeassistant/_data/sensor.txt", "r+") as f:
-        val = f.read()
+        val = f.read().strip("\n")
     
-    if val != kolor:
+    if val != setColor:
         if val == "000000000":
             ledkolor(val)
             rl1.off()
@@ -119,6 +119,7 @@ def whiteTone():
         return "173088014" # cieply bialy
 
 def ledkolor(kolor):
+    global setColor
     ser.write(kolor.encode())
     setColor = kolor
     line = ser.readline().decode('utf-8').rstrip()
@@ -519,4 +520,7 @@ while True:
                     czasy4 = 0
                 if datetime.datetime.now().strftime("%d.%m") != dataObudzenia and jc != 3: #6godzinne mozna odpuscic bo potem nie dzialaja inne
                     czasy4 = (datetime.datetime.now() + datetime.timedelta(seconds=10)).strftime("%H:%M:%S")
-    checkColor()
+    try:
+        checkColor()
+    except IOError:
+        print("file unavailable")
