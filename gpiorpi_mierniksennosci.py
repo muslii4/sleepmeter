@@ -75,6 +75,8 @@ ser.write("000000000".encode())
 line = ser.readline().decode('utf-8').rstrip()
 print(line)
 
+setColor = "000000000"
+
 try:
     client = gspread.authorize(loginy)
     aDane = client.open("Sen").sheet1
@@ -97,6 +99,19 @@ czasy4 = 0
 odjazdy = ["08:25", "06:35", "07:25", "07:25", "09:55"]
 sciezka = r"/home/pi/mierniksennosci/data/buffer.txt"
 
+def checkColor():
+    global kolor
+    with open(r"/var/lib/docker/volumes/homeassistant/_data/sensor.txt", "r+") as f:
+        val = f.read()
+    
+    if val != kolor:
+        if val == "000000000":
+            ledkolor(val)
+            rl1.off()
+        else:
+            ledkolor(val)
+            rl1.on()
+
 def whiteTone():
     if sun.get_local_sunrise_time() < utc.localize(datetime.datetime.now()) < sun.get_local_sunset_time(): # czy jest miedzy wschodem a zachodem slonca
         return "255255255" # bardzo bialy
@@ -105,8 +120,12 @@ def whiteTone():
 
 def ledkolor(kolor):
     ser.write(kolor.encode())
+    setColor = kolor
     line = ser.readline().decode('utf-8').rstrip()
     print(line)
+
+    with open(r"/var/lib/docker/volumes/homeassistant/_data/sensor.txt", "w") as f:
+        f.write(kolor)
 
 def youtubowyBudzik(jc):
     global budzikLinki
@@ -500,3 +519,4 @@ while True:
                     czasy4 = 0
                 if datetime.datetime.now().strftime("%d.%m") != dataObudzenia and jc != 3: #6godzinne mozna odpuscic bo potem nie dzialaja inne
                     czasy4 = (datetime.datetime.now() + datetime.timedelta(seconds=10)).strftime("%H:%M:%S")
+    checkColor()
