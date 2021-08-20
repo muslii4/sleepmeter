@@ -1,7 +1,4 @@
 import time
-
-time.sleep(5)
-
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import datetime
@@ -102,8 +99,12 @@ sciezka = r"/home/pi/mierniksennosci/data/buffer.txt"
 def checkColor():
     global setColor
     with open(r"/var/lib/docker/volumes/homeassistant/_data/sensor.txt", "r+") as f:
-        val = f.read().strip("\n")
-    
+        try:
+            val = f.read().strip("\n")[-9:]
+#            f.truncate(0)
+ #           f.write(val)
+        except:
+            return None
     if val != setColor:
         if val == "000000000":
             ledkolor(val)
@@ -132,9 +133,9 @@ def youtubowyBudzik(jc):
     global budzikLinki
     rl1.on()
     ledkolor("056232255")
-    webbrowser.open_new_tab("http://www.hasthelargehadroncolliderdestroyedtheworldyet.com/")
+    webbrowser.get("chromium-browser").open_new_tab("http://www.hasthelargehadroncolliderdestroyedtheworldyet.com/")
     time.sleep(2)
-    webbrowser.open_new_tab(budzikLinki[random.randint(0, len(budzikLinki) - 1)])
+    webbrowser.get("chromium-browser").open_new_tab(budzikLinki[random.randint(0, len(budzikLinki) - 1)])
     koniec = datetime.datetime.now() + datetime.timedelta(minutes=2)
     while 1:
         if datetime.datetime.now() >= koniec:
@@ -437,9 +438,8 @@ while True:
             obudzsie(datetime.datetime.now().strftime("%H:%M:%S"), False)
             pisk(0.2, 2, bz1)
             print("pokazuje pogode")
-            webbrowser.open_new_tab("/home/pi/mierniksennosci/data/index.html")
-            time.sleep(30)
-            print("zamykam pogode")
+            webbrowser.get("chromium-browser").open_new_tab("meteo.pl/um/php/meteogram_id_um.php?ntype=0u&id=686")
+            time.sleep(60)
             os.system("pkill -f chromium")
         else:
             print("polaczenie sieciowe niedostepne, zapisywanie w pamieci")
