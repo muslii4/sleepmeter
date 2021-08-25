@@ -438,7 +438,7 @@ while True:
             obudzsie(datetime.datetime.now().strftime("%H:%M:%S"), False)
             pisk(0.2, 2, bz1)
             print("pokazuje pogode")
-            webbrowser.get("chromium-browser").open_new_tab("meteo.pl/um/php/meteogram_id_um.php?ntype=0u&id=686")
+            webbrowser.get("chromium-browser").open_new_tab("meteo.pl/um/php/meteorogram_id_um.php?ntype=0u&id=686")
             time.sleep(60)
             os.system("pkill -f chromium")
         else:
