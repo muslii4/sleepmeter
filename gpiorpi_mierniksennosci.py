@@ -122,7 +122,7 @@ def youtubowyBudzik(jc):
     webbrowser.get("chromium-browser").open_new_tab("http://www.hasthelargehadroncolliderdestroyedtheworldyet.com/")
     time.sleep(2)
     webbrowser.get("chromium-browser").open_new_tab(budzikLinki[random.randint(0, len(budzikLinki) - 1)])
-    koniec = datetime.datetime.now() + datetime.timedelta(minutes=2)
+    koniec = datetime.datetime.now() + datetime.timedelta(minutes=3)
     while 1:
         if datetime.datetime.now() >= koniec:
             os.system("pkill -f chromium")
