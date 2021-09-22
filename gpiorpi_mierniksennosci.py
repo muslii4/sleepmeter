@@ -16,13 +16,14 @@ import sys
 
 budzikLinki = ["https://www.youtube.com/watch?v=xJiaTpmeTX4", # su lee - wide awake
                "https://www.youtube.com/watch?v=-dkdi-tCEw0", # su lee - sleepy hollow
-               "https://www.youtube.com/watch?v=bAgmGZ9iQ2Y", # macintosh plus - floral shoppe
                "https://www.youtube.com/watch?v=BVVfMFS3mgc", # chuu loona - heart attack
                "https://www.youtube.com/watch?v=ainyK6fXku0", # william shatner - common people
                "https://www.youtube.com/watch?v=nso6Vhg0p9k", # szanty - bitwa
                "https://www.youtube.com/watch?v=6M4d2SmhSP8", # yvette young - a map a string a light
                "https://www.youtube.com/watch?v=_xR2BymJj6U", # daria zawialow - hej hej
-               "https://www.youtube.com/watch?v=M2QSMMXKQxE"  # aseul - sandcastles
+               "https://www.youtube.com/watch?v=M2QSMMXKQxE", # aseul - sandcastles
+               "https://www.youtube.com/watch?v=CYiGyaJyPMk", # young leosia - szklanki
+               "https://www.youtube.com/watch?v=f_6AQA4uzD0"  # preubens gloria
                ]
 
 allBuffered = False
