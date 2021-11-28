@@ -82,7 +82,7 @@ bz3 = gpiozero.TonalBuzzer(27)
 rl1 = gpiozero.OutputDevice(21, False)
 
 czasy1 = ["1.08:00:00", "2.06:52:00", "3.06:52:00", "4.06:52:00", "5.06:52:00"]
-czasy2 = ["1.08:54:00", "2.07:09:00", "3.07:09:00", "4.07:09:00", "5.07:09:00"]
+czasy2 = ["1.08:54:00", "2.07:09:00", "3.07:09:00", "4.07:09:00", "5.07:09:00"] # chyba nie w uzyciu
 czasy3 = 0
 czasy4 = 0
 odjazdy = ["09:05", "07:20", "07:20", "07:20", "07:20"]
@@ -135,6 +135,8 @@ def youtubowyBudzik(jc):
             while datetime.datetime.now() <= koniec:
                 if b1.is_active:
                     break
+                if b2.is_active:
+                    return 0
             if not b1.is_active:
                 ledkolor("255000000")
                 bz2.on()
