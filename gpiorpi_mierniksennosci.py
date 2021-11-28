@@ -39,6 +39,8 @@ lon = 19
 sun = suntime.Sun(lat, lon)
 utc = pytz.UTC
 
+sleepDelay = 10
+
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/apikey.json", scope)
 
@@ -295,7 +297,7 @@ def zasnij():
         b1.wait_for_inactive()
 
 def obudzsie(czas, sztuczne):
-    global dataObudzenia
+    global dataObudzenia, sleepDelay
 
     if not sztuczne and len(sys.argv) < 2: # dowolny argument to wylacza
         bz2.on()
@@ -319,8 +321,6 @@ def obudzsie(czas, sztuczne):
         godzina = ""
         minuta = ""
         sekunda = ""
-
-        delay = 10
     
         godzina = godzina + komorka[0]
         godzina = godzina + komorka[1]
@@ -336,7 +336,7 @@ def obudzsie(czas, sztuczne):
     except ValueError:
         print("problem")
 
-    wartosc = str(godzina) + ":" + str(minuta + delay) + ":" + str(sekunda)
+    wartosc = str(godzina) + ":" + str(minuta + sleepDelay) + ":" + str(sekunda)
     
     aDane.update_cell(2, 3, wartosc)
     dataObudzenia = datetime.datetime.now().strftime("%d.%m")
@@ -361,7 +361,7 @@ while True:
             continue
         if b1.is_pressed:
             print("sen szesciogodzinny")
-            czasy3 = (datetime.datetime.now() + datetime.timedelta(hours=6,minutes=15)).strftime("%H:%M:%S")
+            czasy3 = (datetime.datetime.now() + datetime.timedelta(hours=6,minutes=sleepDelay)).strftime("%H:%M:%S")
             print(czasy3)
             pisk(0.1, 1, bz1)
         l1.off()
