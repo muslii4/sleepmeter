@@ -14,6 +14,9 @@ import sys
 
 # sudo nano /etc/xdg/autostart/miernik.desktop
 
+# TODO:
+# nowe warunki w juzCzas();
+
 budzikLinki = ["https://www.youtube.com/watch?v=xJiaTpmeTX4", # su lee - wide awake
                "https://www.youtube.com/watch?v=-dkdi-tCEw0", # su lee - sleepy hollow
                "https://www.youtube.com/watch?v=BVVfMFS3mgc", # chuu loona - heart attack
@@ -136,6 +139,7 @@ def youtubowyBudzik(jc):
                 if b1.is_active:
                     break
                 if b2.is_active:
+                    bz2.off()
                     return 0
             if not b1.is_active:
                 ledkolor("255000000")
@@ -181,13 +185,11 @@ def doSkip():
 def juzCzas():
     global czasy3, czasy4
     try:
-        print("index czasu:", czasy1.index(time.strftime("%u.%H:%M:%S")))
-        print("lista 1")
+        czasy1.index(time.strftime("%u.%H:%M:%S"))
         return 1
     except ValueError:
         try:
-            print("index czasu:", czasy2.index(time.strftime("%u.%H:%M:%S")))
-            print("lista 2")
+            czasy2.index(time.strftime("%u.%H:%M:%S"))
             return 2
         except ValueError:
             if czasy3 == datetime.datetime.now().strftime("%H:%M:%S"):
