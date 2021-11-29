@@ -16,6 +16,7 @@ import sys
 
 # TODO:
 # nowe warunki w juzCzas();
+# update budziklinki;
 
 budzikLinki = ["https://www.youtube.com/watch?v=xJiaTpmeTX4", # su lee - wide awake
                "https://www.youtube.com/watch?v=-dkdi-tCEw0", # su lee - sleepy hollow
