@@ -138,7 +138,7 @@ def whiteTone():
     if sun.get_local_sunrise_time() < utc.localize(datetime.datetime.now()) < sun.get_local_sunset_time(): # czy jest miedzy wschodem a zachodem slonca
         return "255255255" # bardzo bialy
     else:
-        return "173058014" # cieply bialy
+        return "lowblue" # cieply bialy
 
 def ledkolor(kolor):
     global setColor
