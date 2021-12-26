@@ -15,20 +15,13 @@ import sys
 # sudo nano /etc/xdg/autostart/miernik.desktop
 
 # TODO:
-# nowe warunki w juzCzas(), standaryzacja zwracanych wartosci;
-# update budziklinki;
+#  - cos z ld ale nikt nie wie co
+#  - madrzejsze alarmy (wczesniej troche ale blizej n*1.5h)
 
-budzikLinki = ["https://www.youtube.com/watch?v=xJiaTpmeTX4", # su lee - wide awake
-               "https://www.youtube.com/watch?v=-dkdi-tCEw0", # su lee - sleepy hollow
-               "https://www.youtube.com/watch?v=BVVfMFS3mgc", # chuu loona - heart attack
-               "https://www.youtube.com/watch?v=ainyK6fXku0", # william shatner - common people
-               "https://www.youtube.com/watch?v=nso6Vhg0p9k", # szanty - bitwa
-               "https://www.youtube.com/watch?v=6M4d2SmhSP8", # yvette young - a map a string a light
-               "https://www.youtube.com/watch?v=_xR2BymJj6U", # daria zawialow - hej hej
-               "https://www.youtube.com/watch?v=M2QSMMXKQxE", # aseul - sandcastles
-               "https://www.youtube.com/watch?v=CYiGyaJyPMk", # young leosia - szklanki
-               "https://www.youtube.com/watch?v=f_6AQA4uzD0"  # preubens gloria
-               ]
+with open(r"data/budziklinki.txt", "r") as f:
+    budzikLinki = f.readlines()
+for i in range(len(budzikLinki)):
+    budzikLinki[i] = budzikLinki[i].split("#")[0][:-1] # do #, bez spacji na końcu
 
 allBuffered = False
 skip = False
@@ -46,7 +39,7 @@ utc = pytz.UTC
 sleepDelay = 10
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
-loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/apikey.json", scope)
+loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/data/apikey.json", scope)
 
 print("mierniksennosci v5.4 gpiorpi")
 
@@ -87,12 +80,12 @@ rl1 = gpiozero.OutputDevice(21, False)
 
 czasyStacjonarne = ["1.08:00:00", "2.06:52:00", "3.06:52:00", "4.06:52:00", "5.06:52:00"]
 czasyZdalne = ["1.09:45:00", "2.07:55:00", "3.07:55:00", "4.07:55:00", "5.07:55:00"]
-czasy3 = 0
-czasy4 = 0
+czasy2 = None
+czasy3 = None
 odjazdy = ["09:05", "07:20", "07:20", "07:20", "07:20"]
 sciezka = r"/home/pi/mierniksennosci/data/buffer.txt"
 
-alarmy = czasyZdalne # nalezy zmieniac w zaleznosci od trybu nauczania
+czasy1 = czasyZdalne # nalezy zmieniac w zaleznosci od trybu nauczania
 
 def checkColor():
     global setColor
@@ -186,20 +179,15 @@ def doSkip():
     b2.wait_for_inactive()
 
 def juzCzas():
-    global czasy3, czasy4
-    try:
-        alarmy.index(time.strftime("%u.%H:%M:%S"))
+    global czasy1, czasy2, czasy3
+    now = time.strftime("%u.%H:%M:%S")
+
+    if now in czasy1: # planowane
         return 1
-    except ValueError:
-        if czasy3 == datetime.datetime.now().strftime("%H:%M:%S"):
-            czasy3 = 0
-            return 3
-        else:
-            if czasy4 == datetime.datetime.now().strftime("%H:%M:%S"):
-                czasy4 = 0
-                return 4
-            else:
-                return 0
+    elif now in czasy2: # 6godzinne
+        return 2
+    elif now in czasy3: # 10sekundowe przymuszenie do wstania, nie dziala na 6godzinne ale to pozniej pisze
+        return 3
             
 def dopiszZasnij():
     global allBuffered
@@ -340,13 +328,13 @@ def obudzsie(czas, sztuczne):
     aDane.update_cell(2, 3, wartosc)
     dataObudzenia = datetime.datetime.now().strftime("%d.%m")
 
-rl1.off()
-l1.on()
-pisk(0.1, 3, bz1)
-
 if connectionTest():
     while allBuffered == False:
         wpiszBuffer()
+
+rl1.off()
+l1.on()
+pisk(0.1, 3, bz1)
 
 while True:
     if b1.is_pressed:
@@ -359,8 +347,8 @@ while True:
             continue
         if b1.is_pressed:
             print("sen szesciogodzinny")
-            czasy3 = (datetime.datetime.now() + datetime.timedelta(hours=6,minutes=sleepDelay)).strftime("%H:%M:%S")
-            print(czasy3)
+            czasy2 = (datetime.datetime.now() + datetime.timedelta(hours=6,minutes=sleepDelay)).strftime("%H:%M:%S")
+            print(czasy2)
             pisk(0.1, 1, bz1)
         l1.off()
         ledkolor("173088014")
@@ -408,8 +396,8 @@ while True:
             ledkolor("255000000")
             dopiszObudzsie()
             pisk(0.5, 1, bz1)    
-        czasy3 = 0
-        czasy4 = 0
+        czasy2 = None
+        czasy3 = None
         print("===============================")
         time.sleep(3)
         rl1.off()
@@ -437,19 +425,19 @@ while True:
                 skip = False
                 print("pominieto #" + jc)
                 time.sleep(1)
-            elif holidaysStart <= datetime.datetime.now() <= holidaysEnd and jc != 3 and jc != 4: # 6godzinne i 10sekundowe powinny dzialac w wakacje
+            elif holidaysStart <= datetime.datetime.now() <= holidaysEnd and jc != 2: # 6godzinne powinny dzialac w wakacje, 10s nie wystapia
                 print("wakacje, pominieto alarm")
                 time.sleep(1)
             elif datetime.datetime.now().strftime("%d.%m") == dataObudzenia:
-                czasy3 = 0
-                czasy4 = 0
+                czasy2 = None
+                czasy3 = None
             else:
                 if jc == 1:
                     youtubowyBudzik(jc)
-                elif jc == 3:
+                elif jc == 2:
                     print("alarm szesciogodzinny")
                     youtubowyBudzik(jc)
-                elif jc == 4:
+                elif jc == 3:
                     ledkolor("255000000")
                     rl1.on()
                     bz2.on()
@@ -461,9 +449,9 @@ while True:
                     time.sleep(1)
                     rl1.off()
                     ledkolor("000000000")
-                    czasy4 = 0
-                if datetime.datetime.now().strftime("%d.%m") != dataObudzenia and jc != 3: #6godzinne mozna odpuscic bo potem nie dzialaja inne
-                    czasy4 = (datetime.datetime.now() + datetime.timedelta(seconds=10)).strftime("%H:%M:%S")
+                    czasy3 = None
+                if datetime.datetime.now().strftime("%d.%m") != dataObudzenia and jc != 2: #6godzinne mozna odpuscic bo potem nie dzialaja inne
+                    czasy3 = (datetime.datetime.now() + datetime.timedelta(seconds=10)).strftime("%H:%M:%S")
     try:
         checkColor()
     except IOError:

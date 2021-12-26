@@ -13,6 +13,7 @@ void setup() {
 void loop() {
   if (Serial.available() > 0) {
     String data = Serial.readStringUntil('\n'); // "255255255"
+
     rVal = data.substring(0, 3).toInt();
     gVal = data.substring(3, 6).toInt();
     bVal = data.substring(6, 9).toInt();
@@ -20,7 +21,5 @@ void loop() {
     analogWrite(rPin, rVal);
     analogWrite(gPin, gVal);
     analogWrite(bPin, bVal);
-    Serial.print("Ustawiono kolor: ");
-    Serial.println(String(rVal) + "." + String(gVal) + "." + String(bVal));
   }
 }
