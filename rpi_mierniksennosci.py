@@ -127,7 +127,7 @@ def checkColor():
         except:
             return None
     if val != setColor:
-        if val == "none":
+        if val == "000000000":
             ledkolor(val)
             rl1.off()
         else:
