@@ -59,7 +59,7 @@ time.sleep(1.3)
 ser.write("000000000".encode())
 line = ser.readline().decode('utf-8').rstrip()
 
-setColor = "none"
+setColor = "000000000"
 
 try:
     client = gspread.authorize(loginy)
