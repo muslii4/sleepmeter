@@ -56,7 +56,7 @@ time.sleep(1.3)
 ser.write("000000255".encode())
 line = ser.readline().decode('utf-8').rstrip()
 time.sleep(1.3)
-ser.write("none".encode())
+ser.write("000000000".encode())
 line = ser.readline().decode('utf-8').rstrip()
 
 setColor = "none"
