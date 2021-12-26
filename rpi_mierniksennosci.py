@@ -21,7 +21,7 @@ import sys
 with open(r"data/budziklinki.txt", "r") as f:
     budzikLinki = f.readlines()
 for i in range(len(budzikLinki)):
-    budzikLinki[i] = budzikLinki[i].split("#")[0][:-1] # do #, bez spacji na końcu
+    budzikLinki[i] = budzikLinki[i].split("#")[0][:-1] # do #, bez spacji na koncu
 
 allBuffered = False
 skip = False
