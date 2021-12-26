@@ -17,6 +17,8 @@ import sys
 
 # TODO:
 #  - cos z ld ale nikt nie wie co
+#  - podejrzanie długie obliczenia w obudzsie
+#  - ta delta jeszcze niepewna taka
 
 with open(r"data/budziklinki.txt", "r") as f:
     budzikLinki = f.readlines()
@@ -117,7 +119,7 @@ def optimizeAlarms(): # zoptymalizowane sa troche wczesniej niz zwykle ale tamte
         print("zoptymalizowano alarm", alarmBefore, "do", czasy1optimized)
     else:
         print("nie zoptymalizowano alarmu")
-        
+
     print("delta min:", perfectDelta*60)
 
 def checkColor():
