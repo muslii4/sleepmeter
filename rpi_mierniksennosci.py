@@ -87,7 +87,7 @@ czasy3 = None
 odjazdy = ["09:05", "07:20", "07:20", "07:20", "07:20"]
 sciezka = r"/home/pi/mierniksennosci/data/buffer.txt"
 
-czasy1 = czasyZdalne # nalezy zmieniac w zaleznosci od trybu nauczania
+czasy1 = czasyStacjonarne # nalezy zmieniac w zaleznosci od trybu nauczania
 
 def optimizeAlarms(): # zoptymalizowane sa troche wczesniej niz zwykle ale tamte tez wystepuja
     global czasy1, czasy1optimized
@@ -98,26 +98,27 @@ def optimizeAlarms(): # zoptymalizowane sa troche wczesniej niz zwykle ale tamte
         nextWeekday = now.weekday() + 1
     if nextWeekday == 7:
         nextWeekday = 0
-    print("nextWeekday: ", nextWeekday)
     
     nextAlarm = None
-    for i in czasy1:
-        if i[:1] == str(nextWeekday):
-            nextAlarm = datetime.datetime.strptime(i, "%U.%H:%M:%S")
+    for i in range(len(czasy1)):
+        if czasy1[i][:1] == str(nextWeekday):
+            nextAlarm = datetime.datetime.strptime(czasy1[i], "%U.%H:%M:%S")
+            alarmBefore = czasy1[i]
             break
     if nextAlarm == None:
         print("brak alarmu do zoptymalizowania")
         return 0
 
-    timeToAlarm = (nextAlarm - now).seconds/(60*60) + sleepDelay/60 # to decimal hours
-    perfectDelta = timeToAlarm%1.5 # perfect sleep = divisible by 1.5h
+    timeToAlarm = (nextAlarm - now).seconds/(60*60) - (sleepDelay/60) # to decimal hours
+    perfectDelta = timeToAlarm % 1.5 # perfect sleep = divisible by 1.5h
 
     if perfectDelta < 0.75: # 45 minut moze skrocic bo to w godzinach jest
-        czasy1optimized = (now + datetime.timedelta(hours=timeToAlarm-perfectDelta)).strftime("%U.%H:%M:%S")
-        print("zoptymalizowano alarm", czasy1, "do", czasy1optimized)
+        czasy1optimized = nextWeekday + (now + datetime.timedelta(hours=timeToAlarm-perfectDelta)).strftime(".%H:%M:%S")
+        print("zoptymalizowano alarm", alarmBefore, "do", czasy1optimized)
     else:
         print("nie zoptymalizowano alarmu")
-    print("delta:", perfectDelta)
+        
+    print("delta min:", perfectDelta*60)
 
 def checkColor():
     global setColor
@@ -128,7 +129,7 @@ def checkColor():
             return None
     if val != setColor:
         if val == "000000000":
-            ledkolor(val)
+            ledkolor("none")
             rl1.off()
         else:
             ledkolor(val)
@@ -143,14 +144,13 @@ def whiteTone():
 def ledkolor(kolor):
     global setColor
     if kolor == "highblue":
-        kolor == "056232255"
-    elif kolor == "lowblue":
-        kolor == "173058014"
-    elif kolor == "none":
-        kolor == "000000000"
-    else:
-        ser.write(kolor.encode())
+        kolor = "056232255"
+    if kolor == "lowblue":
+        kolor = "173058014"
+    if kolor == "none":
+        kolor = "000000000"
     
+    ser.write(kolor.encode())
     setColor = kolor
     with open(r"/var/lib/docker/volumes/homeassistant/_data/sensor.txt", "w") as f:
         f.write(kolor)
