@@ -12,40 +12,42 @@ import serial
 import suntime
 import pytz
 import sys
+import yaml
 
 # sudo nano /etc/xdg/autostart/miernik.desktop
 
 # TODO:
+#  - config file
+#  - tlumaczenie na ang
+#
 #  - cos z ld ale nikt nie wie co
-#  - podejrzanie długie obliczenia w obudzsie
+#  - podejrzanie dlugie obliczenia w obudzsie
 #  - ta delta jeszcze niepewna taka
 
-with open(r"data/budziklinki.txt", "r") as f:
-    budzikLinki = f.readlines()
-for i in range(len(budzikLinki)):
-    budzikLinki[i] = budzikLinki[i].split("#")[0][:-1] # do #, bez spacji na koncu
+with open("config.yaml", "r") as f:
+    config = yaml.load(f, Loader=yaml.FullLoader)
+
+budzikLinki = config["budzik"]["ytLista"]
 
 allBuffered = False
 skip = False
 jestZle = False
 dataObudzenia = 0
 
-holidaysStart = datetime.datetime(day=23,month=12,year=2021)
-holidaysEnd = datetime.datetime(day=2,month=1,year=2022)
+holidaysStart = datetime.datetime.strptime(config["holidays"]["holidaysStart"], "%d.%m.%Y")
+holidaysEnd = datetime.datetime.strptime(config["holidays"]["holidaysEnd"], "%d.%m.%Y")
 
-lat = 49.8
-lon = 19
-sun = suntime.Sun(lat, lon)
+sun = suntime.Sun(config["led"]["lat"], config["led"]["lon"])
 utc = pytz.UTC
 
-sleepDelay = 15
+sleepDelay = config["budzik"]["sleepDelay"]
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 loginy = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/data/apikey.json", scope)
 
 print("mierniksennosci v5.5 gpiorpi")
 
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+ser = serial.Serial(config["led"]["port"], 9600, timeout=1)
 ser.flush()
 time.sleep(1.5)
 
@@ -81,15 +83,19 @@ bz2 = gpiozero.Buzzer(19) #glosny
 bz3 = gpiozero.TonalBuzzer(27)
 rl1 = gpiozero.OutputDevice(21, False)
 
-czasyStacjonarne = ["0.08:00:00", "1.06:52:00", "2.06:52:00", "3.06:52:00", "4.06:52:00"] # limit 1 alarm dziennie (optimizeAlarms()), 0=monday
-czasyZdalne = ["0.09:45:00", "1.07:55:00", "2.07:55:00", "3.07:55:00", "4.07:55:00"] # limit 1 alarm dziennie (optimizeAlarms())
+czasyStacjonarne = config["budzik"]["czasy"]["stacjonarne"] # 0=monday
+czasyZdalne = config["budzik"]["czasy"]["zdalne"]
 czasy1optimized = None
 czasy2 = None
 czasy3 = None
-odjazdy = ["09:05", "07:20", "07:20", "07:20", "07:20"]
-sciezka = r"/home/pi/mierniksennosci/data/buffer.txt"
+buffer = r"/home/pi/mierniksennosci/data/buffer.txt"
 
-czasy1 = czasyStacjonarne # nalezy zmieniac w zaleznosci od trybu nauczania
+if config["budzik"]["czasy"]["aktualnie"] == "zdalne":
+    czasy1 = czasyZdalne
+elif config["budzik"]["czasy"]["aktualne"] == "stacjonarne":
+    czasy1 = czasyStacjonarne
+else:
+    raise ValueError("nie podano czasu")
 
 def optimizeAlarms(): # zoptymalizowane sa troche wczesniej niz zwykle ale tamte tez wystepuja
     global czasy1, czasy1optimized
@@ -114,7 +120,7 @@ def optimizeAlarms(): # zoptymalizowane sa troche wczesniej niz zwykle ale tamte
     timeToAlarm = (nextAlarm - now).seconds/(60*60) - (sleepDelay/60) # to decimal hours
     perfectDelta = timeToAlarm % 1.5 # perfect sleep = divisible by 1.5h
 
-    if perfectDelta < 0.75: # 45 minut moze skrocic bo to w godzinach jest
+    if perfectDelta < config["budzik"]["maxOptymalizacja"]:
         czasy1optimized = nextWeekday + (now + datetime.timedelta(hours=timeToAlarm-perfectDelta)).strftime(".%H:%M:%S")
         print("zoptymalizowano alarm", alarmBefore, "do", czasy1optimized)
     else:
@@ -124,7 +130,7 @@ def optimizeAlarms(): # zoptymalizowane sa troche wczesniej niz zwykle ale tamte
 
 def checkColor():
     global setColor
-    with open(r"/var/lib/docker/volumes/homeassistant/_data/sensor.txt", "r+") as f:
+    with open(config["led"]["file"], "r+") as f:
         try:
             val = f.read().strip("\n")[-9:]
         except:
@@ -146,15 +152,15 @@ def whiteTone():
 def ledkolor(kolor):
     global setColor
     if kolor == "highblue":
-        kolor = "056232255"
+        kolor = config["led"]["colors"]["highblue"]
     if kolor == "lowblue":
-        kolor = "173058014"
+        kolor = config["led"]["colors"]["lowblue"]
     if kolor == "none":
         kolor = "000000000"
     
     ser.write(kolor.encode())
     setColor = kolor
-    with open(r"/var/lib/docker/volumes/homeassistant/_data/sensor.txt", "w") as f:
+    with open(config["led"]["file"], "w") as f:
         f.write(kolor)
 
 def youtubowyBudzik():
@@ -233,9 +239,9 @@ def juzCzas():
             
 def dopiszZasnij():
     global allBuffered
-    with open(sciezka, "r") as f:
+    with open(buffer, "r") as f:
         content = f.readlines()
-    with open(sciezka, "w") as f2:
+    with open(buffer, "w") as f2:
         lines = ["zasnij\n", datetime.datetime.now().strftime("%d.%m.%Y\n"), datetime.datetime.now().strftime("%H:%M:%S\n"), datetime.datetime.now().strftime("%H:%M:%S\n")]
         f2.writelines(content + lines)
     
@@ -249,9 +255,9 @@ def dopiszZasnij():
 
 def dopiszObudzsie():
     global allBuffered
-    with open(sciezka, "r") as f:
+    with open(buffer, "r") as f:
         content = f.readlines()
-    with open(sciezka, "w") as f2:
+    with open(buffer, "w") as f2:
         lines = ["obudzsie\n", datetime.datetime.now().strftime("%H:%M:%S\n")]
         f2.writelines(content + lines)
     
@@ -269,26 +275,26 @@ def wpiszBuffer():
     time.sleep(0.2)
     l1.on()
     time.sleep(0.2)
-    with open(sciezka, "r") as f:
+    with open(buffer, "r") as f:
         content = f.readlines()
     if content:
         if content[0].rstrip("\n") == "zasnij":
             aDane.insert_row([content[1].rstrip("\n"), content[2].rstrip("\n"), content[3].rstrip("\n")], 2, "USER_ENTERED")
-            with open(sciezka,"w") as f2:
+            with open(buffer,"w") as f2:
                 f2.truncate(0)
                 f2.writelines(content[4:])
-            with open(sciezka, "r") as f3:
+            with open(buffer, "r") as f3:
                 content = f3.readlines()
     if content:
         if content[0].rstrip("\n") == "obudzsie":
             obudzsie(content[1], True)    
-            with open(sciezka,"w") as f4:
+            with open(buffer,"w") as f4:
                 f4.truncate(0)
                 f4.writelines(content[2:])
     if content:
         if content[0].rstrip("\n") != "obudzsie" and content[0].rstrip("\n") != "zasnij":
             print("Nieprawidlowa linia: ", content[0], "\nusuwanie")
-            with open(sciezka, "r+") as f5:
+            with open(buffer, "r+") as f5:
                 content = f5.readlines()
                 f5.truncate(0)
                 f5.writelines(content[1:])
@@ -499,7 +505,7 @@ while True:
                     rl1.off()
                     ledkolor("none")
                     czasy3 = None
-                if datetime.datetime.now().strftime("%d.%m") != dataObudzenia and jc != 2: #6godzinne mozna odpuscic bo potem nie dzialaja inne
+                if datetime.datetime.now().strftime("%d.%m") != dataObudzenia and jc == 1: #6godzinne mozna odpuscic bo potem nie dzialaja inne
                     czasy3 = (datetime.datetime.now() + datetime.timedelta(seconds=10)).strftime("%H:%M:%S")
     try:
         checkColor()
