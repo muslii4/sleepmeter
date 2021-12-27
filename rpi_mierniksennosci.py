@@ -24,8 +24,13 @@ import yaml
 #  - podejrzanie dlugie obliczenia w obudzsie
 #  - ta delta jeszcze niepewna taka
 
-with open("config.yaml", "r") as f:
-    config = yaml.load(f, Loader=yaml.FullLoader)
+try:
+    with open("config.yaml", "r") as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
+except IOError:
+    with open("configExample.yaml", "r") as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
+
 
 budzikLinki = config["budzik"]["ytLista"]
 
