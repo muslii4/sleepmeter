@@ -25,10 +25,10 @@ import yaml
 #  - ta delta jeszcze niepewna taka
 
 try:
-    with open("config.yaml", "r") as f:
+    with open("/home/pi/mierniksennosci/config.yaml", "r") as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
 except IOError:
-    with open("configExample.yaml", "r") as f:
+    with open("/home/pi/mierniksennosci/configExample.yaml", "r") as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
 
 
@@ -126,7 +126,7 @@ def optimizeAlarms(): # zoptymalizowane sa troche wczesniej niz zwykle ale tamte
     perfectDelta = timeToAlarm % 1.5 # perfect sleep = divisible by 1.5h
 
     if perfectDelta < config["budzik"]["maxOptymalizacja"]:
-        czasy1optimized = nextWeekday + (now + datetime.timedelta(hours=timeToAlarm-perfectDelta)).strftime(".%H:%M:%S")
+        czasy1optimized = str(nextWeekday) + (now + datetime.timedelta(hours=timeToAlarm-perfectDelta)).strftime(".%H:%M:%S")
         print("zoptymalizowano alarm", alarmBefore, "do", czasy1optimized)
     else:
         print("nie zoptymalizowano alarmu")
