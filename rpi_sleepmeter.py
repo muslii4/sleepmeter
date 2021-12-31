@@ -14,16 +14,16 @@ import pytz
 import sys
 import yaml
 
-# sudo nano /etc/xdg/autostart/miernik.desktop
+# sudo nano /etc/xdg/autostart/sleepmeter.desktop
 
 # TODO:
 #  - lucid dreaming tools
 
 try:
-    with open("/home/pi/mierniksennosci/config.yaml", "r") as f:
+    with open("/home/pi/sleepmeter/config.yaml", "r") as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
 except IOError:
-    with open("/home/pi/mierniksennosci/configExample.yaml", "r") as f:
+    with open("/home/pi/sleepmeter/configExample.yaml", "r") as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
 
 
@@ -43,9 +43,9 @@ utc = pytz.UTC
 sleepDelay = config["alarmClock"]["sleepDelay"]
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
-credentials = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/mierniksennosci/data/apikey.json", scope)
+credentials = ServiceAccountCredentials.from_json_keyfile_name(r"/home/pi/sleepmeter/data/apikey.json", scope)
 
-print("mierniksennosci v5.5 gpiorpi")
+print("sleepmeter v5.5 gpiorpi")
 
 ser = serial.Serial(config["led"]["port"], 9600, timeout=1)
 ser.flush()
@@ -88,7 +88,7 @@ onlineTimes = config["alarmClock"]["times"]["online"]
 times1optimized = None
 times2 = None
 times3 = None
-buffer = r"/home/pi/mierniksennosci/data/buffer.txt"
+buffer = r"/home/pi/sleepmeter/data/buffer.txt"
 
 if config["alarmClock"]["times"]["current"] == "online":
     times1 = onlineTimes
