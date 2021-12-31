@@ -14,7 +14,7 @@ import pytz
 import sys
 import yaml
 
-# sudo nano /etc/xdg/autostart/sleepmeter.desktop
+# /etc/xdg/autostart/sleepmeter.desktop
 
 # TODO:
 #  - lucid dreaming tools
