@@ -17,8 +17,7 @@ import yaml
 # sudo nano /etc/xdg/autostart/miernik.desktop
 
 # TODO:
-#  - tlumaczenie na ang
-#  - cos z ld ale nikt nie wie co
+#  - lucid dreaming tools
 
 try:
     with open("/home/pi/mierniksennosci/config.yaml", "r") as f:
