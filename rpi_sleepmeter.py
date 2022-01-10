@@ -224,7 +224,7 @@ def doSkip():
 
 def isItTime():
     global times1, times2, times3
-    now = time.strftime("%U.%H:%M:%S")
+    now = datetime.datetime.now().strftime("%U.%H:%M:%S")
 
     if now in times1: # planned
         return 1
