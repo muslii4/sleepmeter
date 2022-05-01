@@ -1,3 +1,6 @@
 data/buffer.txt
 config.yaml
 data/apikey.json
+songs/*
+__pycache__/
+*.pyc

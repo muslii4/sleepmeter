@@ -3,13 +3,14 @@ sheets:
 alarmClock:
   times:
     current: "online"
-    classroom: ["0.08:00:00", "1.06:52:00", "2.06:52:00", "3.06:52:00", "4.06:52:00"]
-    online: ["0.09:45:00", "1.07:55:00", "2.07:55:00", "3.07:55:00", "4.07:55:00"]
+    classroom: ["1.08:00:00", "2.06:52:00", "3.06:52:00", "4.06:52:00", "5.06:52:00"]
+    online: ["1.09:45:00", "2.07:55:00", "3.07:55:00", "4.07:55:00", "5.07:55:00"]
   maxOptimization: 0.75
   sleepDelay: 15
   ytList: 
      - "https://www.youtube.com/watch?v=dQw4w9WgXcQ" # rick astley - never gonna give you up
   weatherURL: "https://weather.com/weather/hourbyhour/l/b565aa4d4c1111a09ad8c1ede054636671f50d38757a6527b35d96b987ef86a8"
+  browser: "chromium-browser"
 led:
   port: "/dev/ttyUSB0"
   lat: 49.8
@@ -21,3 +22,5 @@ led:
 holidays:
   holidaysStart: "23.12.2021"
   holidaysEnd: "02.01.2022"
+buffer: "/home/pi/sleepmeter/data/buffer.txt"
+askForNumber: False
