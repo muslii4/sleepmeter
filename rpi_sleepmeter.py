@@ -122,7 +122,7 @@ def isItTime():
         return 0
 
 def connectionTest():
-    global offlineMode, sheet, client
+    global offlineMode, sheet
     if offlineMode:
         try:
             sheet = sheetsApi.getSheet()
@@ -135,8 +135,10 @@ def connectionTest():
         url = "https://www.google.com/"
         conn = urllib3.connection_from_url(url)
         conn.request("GET", "/")
+        offlineMode = False
         return True
     except:
+        offlineMode = True
         return False
 
 def asleep():
@@ -235,20 +237,21 @@ if __name__ == "__main__":
             print("asleep")
             beep(0.1, 1, bz1)
             if connectionTest():
-                saver = multiprocessing.Process(target=buffer.saveBufferOnline)
-                saver.start()
-                asleep()
-                beep(0.2, 2, bz1)
+                if buffer.isNotEmpty():
+                    buffer.saveAsleep()
+                    saver = multiprocessing.Process(target=buffer.saveBufferOnline)
+                    saver.start()
+                else:
+                    asleep()
             else:
                 print("saving offline")
                 ledstrip.ledColor("lowblue")
                 buffer.saveAsleep()
-                beep(0.5, 1, bz1)
-            time.sleep(0.5)
+            beep(0.2, 2, bz1)
             b1.wait_for_inactive()
             optimizeAlarms()
             print("===============================")
-            time.sleep(5)
+            time.sleep(3)
             rl1.off()
             l1.off()
             ledstrip.ledColor("none")
@@ -265,17 +268,20 @@ if __name__ == "__main__":
             print("awake")
             beep(0.1, 1, bz2)
             if connectionTest():
-                saver = multiprocessing.Process(target=buffer.saveBufferOnline)
-                saver.start()
-                awake(datetime.datetime.now().strftime("%H:%M:%S"), False, sheet, sleepDelay)
-                beep(0.2, 2, bz1)
+                if buffer.isNotEmpty():
+                    buffer.saveAwake()
+                    saver = multiprocessing.Process(target=buffer.saveBufferOnline)
+                    saver.start()
+                else:
+                    awake(datetime.datetime.now().strftime("%H:%M:%S"), False, sheet, sleepDelay)
                 weather = multiprocessing.Process(target=showWeather)
                 weather.start()
+                beep(0.2, 2, bz1)
             else:
                 print("saving offline")
                 ledstrip.ledColor("255000000")
                 buffer.saveAwake()
-                beep(0.5, 1, bz1)    
+                beep(0.2, 2, bz1)
                 time.sleep(1)
                 rl1.off()
                 l1.off()

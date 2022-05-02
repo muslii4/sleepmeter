@@ -39,3 +39,11 @@ def saveBufferOnline():
             with open(buffer,"w") as f4:
                 f4.truncate(0)
                 f4.writelines(content[2:])
+
+def isNotEmpty():
+    with open(buffer, "r") as f:
+        content = f.readlines()
+    if content:
+        return True
+    else:
+        return False
