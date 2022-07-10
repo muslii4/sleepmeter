@@ -11,6 +11,7 @@ sun = suntime.Sun(config["led"]["lat"], config["led"]["lon"])
 utc = pytz.UTC
 setColor = ""
 ser = serial.Serial(config["led"]["port"], 9600, timeout=1)
+colors = {"highblue": config["led"]["colors"]["lowblue"], "lowblue": config["led"]["colors"]["lowblue"], "none": "000000000"}
 
 def init():
     global setColor
@@ -54,13 +55,7 @@ def whiteTone():
 
 def ledColor(color):
     global setColor
-    if color == "highblue":
-        color = config["led"]["colors"]["highblue"]
-    if color == "lowblue":
-        color = config["led"]["colors"]["lowblue"]
-    if color == "none":
-        color = "000000000"
-    
+    color = colors[color]
     ser.write(color.encode())
     setColor = color
     with open(config["led"]["file"], "w") as f:
