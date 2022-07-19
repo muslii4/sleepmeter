@@ -17,10 +17,7 @@ led:
   lon: 19
   colors:
     highblue: "056232255"
-    lowblue: "173058014"
+    lowblue: "150050000"
   file: "/var/lib/docker/volumes/homeassistant/_data/sensor.txt"
-holidays:
-  holidaysStart: "23.12.2021"
-  holidaysEnd: "02.01.2022"
 buffer: "/home/pi/sleepmeter/data/buffer.txt"
 askForNumber: False

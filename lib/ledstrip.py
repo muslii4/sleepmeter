@@ -55,7 +55,8 @@ def whiteTone():
 
 def ledColor(color):
     global setColor
-    color = colors[color]
+    if color in colors: 
+        color = colors[color]
     ser.write(color.encode())
     setColor = color
     with open(config["led"]["file"], "w") as f:

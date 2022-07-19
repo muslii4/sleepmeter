@@ -20,7 +20,7 @@ import lib.sheetsApi as sheetsApi
 
 def showWeather():
     webbrowser.get(config["alarmClock"]["browser"]).open_new_tab(config["alarmClock"]["weatherURL"])
-    time.sleep(60)
+    time.sleep(120)
     os.system("pkill -f " + config["alarmClock"]["browser"])
     rl1.off()
     l1.off()
@@ -148,7 +148,6 @@ def asleep():
         value = [date, timeVal, timeVal]
         sheet.insert_row(value, 2, "USER_ENTERED")
         print(sheet.row_values(2))
-        time.sleep(0.5)
         b1.wait_for_inactive()
 
 def awake(timeVal, fromBuffer, sheet, sleepDelay):
@@ -179,8 +178,6 @@ if __name__ == "__main__":
     awakeDate = 0
 
     config = configFile.getConfig()
-    holidaysStart = datetime.datetime.strptime(config["holidays"]["holidaysStart"], "%d.%m.%Y")
-    holidaysEnd = datetime.datetime.strptime(config["holidays"]["holidaysEnd"], "%d.%m.%Y")
     sleepDelay = config["alarmClock"]["sleepDelay"]
 
     print("sleepmeter v6 gpiorpi")
@@ -251,7 +248,6 @@ if __name__ == "__main__":
             b1.wait_for_inactive()
             optimizeAlarms()
             print("===============================")
-            time.sleep(3)
             rl1.off()
             l1.off()
             ledstrip.ledColor("none")
@@ -304,22 +300,27 @@ if __name__ == "__main__":
                 selcolor = input("Enter color value (255255255): ")
                 ledstrip.ledColor(str(selcolor))
         elif b4.is_pressed:
+            relayState = rl1.is_active
             rl1.on()
             l2.on()
             userInput = input("pick a time (HH:MM or +HH:MM): ")
-            if userInput[-3] == ":" and (len(userInput) == 5 or len(userInput) == 6):
-                if userInput[0] == "+":
-                    times2 = (datetime.datetime.now() + datetime.timedelta(hours=int(userInput[1:3]), minutes=int(userInput[4:6]))).strftime("%u.%H:%M:%S")
-                else:
-                    if datetime.datetime.now().hour < 12:
-                        times2 = datetime.datetime.now().replace(hour=int(userInput[0:2]), minute=int(userInput[3:5])).strftime("%u.%H:%M:%S")
+            try:
+                if userInput[-3] == ":" and (len(userInput) == 5 or len(userInput) == 6):
+                    if userInput[0] == "+":
+                        times2 = (datetime.datetime.now() + datetime.timedelta(hours=int(userInput[1:3]), minutes=int(userInput[4:6]))).strftime("%u.%H:%M:%S")
                     else:
-                        times2 = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=int(userInput[0:2]), minute=int(userInput[3:5])).strftime("%u.%H:%M:%S")
-                print("set to", times2)
-            else:
-                print("invalid input")
+                        if datetime.datetime.now().hour < 12:
+                            times2 = datetime.datetime.now().replace(hour=int(userInput[0:2]), minute=int(userInput[3:5])).strftime("%u.%H:%M:%S")
+                        else:
+                            times2 = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=int(userInput[0:2]), minute=int(userInput[3:5])).strftime("%u.%H:%M:%S")
+                    print("set to", times2)
+                else:
+                    print("invalid input")
+            except:
+                print("invalid input (error)")
             time.sleep(3)
-            rl1.off()
+            if relayState == False:
+                rl1.off()
             l2.off()
         else:
             iit = isItTime()
@@ -329,9 +330,6 @@ if __name__ == "__main__":
                     if iit != 1.5: # optimized and standard are skipped by one skip
                         skip = False
                     print("skipped #" + iit)
-                    time.sleep(1)
-                elif holidaysStart <= datetime.datetime.now() <= holidaysEnd and iit != 2:
-                    print("holidays, skipping alarm")
                     time.sleep(1)
                 elif datetime.datetime.now().strftime("%d.%m") == awakeDate:
                     times2 = None
