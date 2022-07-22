@@ -14,21 +14,18 @@ def updateSongs():
     for i in os.listdir("/home/pi/sleepmeter/songs/"):
         if "https://www.youtube.com/watch?v=" + i.split(".")[0] not in config["alarmClock"]["ytList"]:
             os.system("rm /home/pi/sleepmeter/songs/" + i)
-    if notDownloaded != []:
-        for i in notDownloaded:
-            video_info = youtube_dl.YoutubeDL().extract_info(url=i, download=False)
-            options={
-                'format': 'bestaudio/best',
-                'keepvideo': False,
-                'outtmpl': "/home/pi/sleepmeter/songs/" + i.split("=")[1] + f".mp3",
-            }
-            with youtube_dl.YoutubeDL(options) as ydl:
-                try:
-                    ydl.download([video_info['webpage_url']])
-                except youtube_dl.utils.DownloadError:
-                    print("could not download: ", i)
-    else:
-        print("nothing to download")
+    for i in notDownloaded:
+        video_info = youtube_dl.YoutubeDL().extract_info(url=i, download=False)
+        options={
+            'format': 'bestaudio/best',
+            'keepvideo': False,
+            'outtmpl': "/home/pi/sleepmeter/songs/" + i.split("=")[1] + f".mp3",
+        }
+        with youtube_dl.YoutubeDL(options) as ydl:
+            try:
+                ydl.download([video_info['webpage_url']])
+            except youtube_dl.utils.DownloadError:
+                print("could not download: ", i)
         
 def killPlayer(player):
     os.system("pkill -f omxplayer")
