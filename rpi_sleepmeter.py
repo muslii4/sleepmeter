@@ -214,7 +214,7 @@ if __name__ == "__main__":
             time.sleep(0.5)
             if b2.is_pressed:
                 doSkip()
-                time.sleep(1)
+                time.sleep(3)
                 rl1.off()
                 continue
             if b1.is_pressed:
@@ -251,7 +251,7 @@ if __name__ == "__main__":
             time.sleep(0.5)
             if b1.is_pressed:
                 doSkip()
-                time.sleep(1)
+                time.sleep(3)
                 rl1.off()
                 continue
             l1.on()
@@ -273,6 +273,7 @@ if __name__ == "__main__":
                 ledstrip.ledColor("255000000")
                 buffer.saveAwake()
                 beep(0.2, 2, bz1)
+                time.sleep(1)
                 rl1.off()
                 l1.off()
             times2 = None
@@ -312,8 +313,8 @@ if __name__ == "__main__":
                     print("invalid input")
             except:
                 print("invalid input (error)")
+            time.sleep(3)
             if relayState == False:
-                time.sleep(3)
                 rl1.off()
             l2.off()
         else:
@@ -324,6 +325,7 @@ if __name__ == "__main__":
                     if iit != 1.5: # optimized and standard are skipped by one skip
                         skip = False
                     print("skipped #" + iit)
+                    time.sleep(1)
                 elif datetime.datetime.now().strftime("%d.%m") == awakeDate:
                     times2 = None
                     times3 = None
@@ -340,9 +342,12 @@ if __name__ == "__main__":
                         ledstrip.ledColor("255000000")
                         rl1.on()
                         bz2.on()
+                        time.sleep(1)
                         b1.wait_for_press()
                         bz2.off()
+                        time.sleep(0.5)
                         b1.wait_for_inactive()
+                        time.sleep(1)
                         rl1.off()
                         ledstrip.ledColor("none")
                         times3 = None
