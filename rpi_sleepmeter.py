@@ -318,8 +318,8 @@ if __name__ == "__main__":
                     print("invalid input")
             except:
                 print("invalid input (error)")
-            time.sleep(3)
             if relayState == False:
+                time.sleep(3)
                 rl1.off()
             l2.off()
         else:
