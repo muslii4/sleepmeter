@@ -59,13 +59,12 @@ def optimizeAlarms():
 def musicAlarm():
     global skip
     rl1.on()
-    ledstrip.ledColor("highblue")
+    ledstrip.ledColor("255255255")
     player = multiprocessing.Process(target=musicPlayer.playRandomSong)
     player.start()
     while player.is_alive():
         if b1.is_active:
             musicPlayer.killPlayer(player)
-            time.sleep(1)
             rl1.off()
             ledstrip.ledColor("none")
             return 0
@@ -73,16 +72,13 @@ def musicAlarm():
             musicPlayer.killPlayer(player)
             skip = True
             print("alarm off")
-            time.sleep(1)
             rl1.off()
             ledstrip.ledColor("none")
             return 0
     ledstrip.ledColor("255000000")
     bz2.on()
     b1.wait_for_press()
-    ledstrip.ledColor("lowblue")
     bz2.off()
-    time.sleep(1)
     rl1.off()
     ledstrip.ledColor("none")
             
@@ -102,7 +98,6 @@ def doSkip():
         print("next alarm will be skipped")
     else:
         print("skip cancelled")
-    time.sleep(0.2)
     b1.wait_for_inactive()
     b2.wait_for_inactive()
 
