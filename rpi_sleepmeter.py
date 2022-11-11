@@ -12,6 +12,7 @@ import lib.musicPlayer as musicPlayer
 import lib.buffer as buffer
 import lib.sheetsApi as sheetsApi
 
+
 # /etc/xdg/autostart/sleepmeter.desktop
 
 # TODO:
@@ -25,6 +26,7 @@ def showWeather():
     rl1.off()
     l1.off()
 
+
 def optimizeAlarms():
     global times1, times1optimized
     now = datetime.datetime.now()
@@ -34,27 +36,29 @@ def optimizeAlarms():
         nextWeekday = now.weekday() + 1
     if nextWeekday == 7:
         nextWeekday = 0
-    
+
     nextAlarm = None
     for i in range(len(times1)):
         if times1[i][:1] == str(nextWeekday):
             nextAlarm = datetime.datetime.strptime(times1[i], "%u.%H:%M:%S")
             alarmBefore = times1[i]
             break
-    if nextAlarm == None:
+    if nextAlarm is None:
         print("no alarms to optimize")
         return 0
 
-    timeToAlarm = (nextAlarm - now).seconds/(60*60) - (sleepDelay/60) # to decimal hours
-    perfectDelta = timeToAlarm % 1.5 # perfect sleep = divisible by 1.5h
+    timeToAlarm = (nextAlarm - now).seconds / (60 * 60) - (sleepDelay / 60)  # to decimal hours
+    perfectDelta = timeToAlarm % 1.5  # perfect sleep = divisible by 1.5h
 
     if perfectDelta < config["alarmClock"]["maxOptimization"]:
-        times1optimized = str(nextWeekday) + (now + datetime.timedelta(hours=timeToAlarm-perfectDelta)).strftime("%u.%H:%M:%S")
+        times1optimized = str(nextWeekday) + (now + datetime.timedelta(hours=timeToAlarm - perfectDelta)).strftime(
+            "%u.%H:%M:%S")
         print("optimized time", alarmBefore, "to", times1optimized)
     else:
         print("alarms did not get optimized")
 
-    print("delta (minutes):", perfectDelta*60)
+    print("delta (minutes):", perfectDelta * 60)
+
 
 def musicAlarm():
     global skip
@@ -81,14 +85,16 @@ def musicAlarm():
     bz2.off()
     rl1.off()
     ledstrip.ledColor("none")
-            
+
+
 def beep(timeVal, repeats, bz):
     for i in range(repeats):
         bz.on()
         time.sleep(timeVal)
         bz.off()
-        if i+1 != repeats:
+        if i + 1 != repeats:
             time.sleep(timeVal)
+
 
 def doSkip():
     beep(0.05, 2, bz2)
@@ -101,20 +107,22 @@ def doSkip():
     b1.wait_for_inactive()
     b2.wait_for_inactive()
 
+
 def isItTime():
     global times1, times2, times3
     now = datetime.datetime.now().strftime("%u.%H:%M:%S")
 
-    if now in times1: # planned
+    if now in times1:  # planned
         return 1
-    elif now == times1optimized: # planowane.optimized
+    elif now == times1optimized:  # planned.optimized
         return 1.5
-    elif now == times2: # 6hour
+    elif now == times2:  # 6hour
         return 2
-    elif now == times3: # 10sec
+    elif now == times3:  # 10sec
         return 3
     else:
         return 0
+
 
 def connectionTest():
     global offlineMode, sheet
@@ -122,28 +130,32 @@ def connectionTest():
         try:
             sheet = sheetsApi.getSheet()
             offlineMode = False
-            print("connection attempt successful")
+            print("connected to sheets")
         except:
-            print("connection attempt unsuccessful")
+            print("could not connect to sheets")
             return False
     try:
         url = "https://www.google.com/"
         conn = urllib3.connection_from_url(url)
         conn.request("GET", "/")
         offlineMode = False
+        print("connected to google")
         return True
     except:
         offlineMode = True
+        print("could not connect to google")
         return False
 
-def asleep():
-        timeVal = datetime.datetime.now().strftime("%H:%M:%S")
-        date = datetime.datetime.now().strftime("%d.%m.%Y")
 
-        value = [date, timeVal, timeVal]
-        sheet.insert_row(value, 2, "USER_ENTERED")
-        print(sheet.row_values(2))
-        b1.wait_for_inactive()
+def asleep():
+    timeVal = datetime.datetime.now().strftime("%H:%M:%S")
+    date = datetime.datetime.now().strftime("%d.%m.%Y")
+
+    value = [date, timeVal, timeVal]
+    sheet.insert_row(value, 2, "USER_ENTERED")
+    print(sheet.row_values(2))
+    b1.wait_for_inactive()
+
 
 def awake(timeVal, fromBuffer, sheet, sleepDelay):
     global awakeDate
@@ -160,12 +172,13 @@ def awake(timeVal, fromBuffer, sheet, sleepDelay):
     sheet.update_cell(2, 6, "=IF(B2<=0,5;B2+1;B2)")
     sheet.update_cell(2, 7, "=IF(C2<=0,5;C2+1;C2)")
     sheet.update_cell(2, 8, "=IF(B2>0,5;A2;A2-1)")
-        
+
     cell = sheet.cell(2, 2).value
     value = (datetime.datetime.strptime(cell, "%H:%M:%S") + datetime.timedelta(minutes=sleepDelay)).strftime("%H:%M:%S")
-    
+
     sheet.update_cell(2, 3, value)
     awakeDate = datetime.datetime.now().strftime("%d.%m")
+
 
 if __name__ == "__main__":
     skip = False
@@ -192,8 +205,8 @@ if __name__ == "__main__":
     b4 = gpiozero.Button(9)
     l1 = gpiozero.LED(26, False)
     l2 = gpiozero.LED(11, False)
-    bz1 = gpiozero.Buzzer(5) # quiet
-    bz2 = gpiozero.Buzzer(19) # loud
+    bz1 = gpiozero.Buzzer(5)  # quiet
+    bz2 = gpiozero.Buzzer(19)  # loud
     bz3 = gpiozero.TonalBuzzer(27)
     rl1 = gpiozero.OutputDevice(21, False)
 
@@ -219,7 +232,8 @@ if __name__ == "__main__":
                 continue
             if b1.is_pressed:
                 print("6h sleep")
-                times2 = (datetime.datetime.now() + datetime.timedelta(hours=6, minutes=sleepDelay)).strftime("%u.%H:%M:%S")
+                times2 = (datetime.datetime.now() + datetime.timedelta(hours=6, minutes=sleepDelay)).strftime(
+                    "%u.%H:%M:%S")
                 print(times2)
                 beep(0.1, 1, bz1)
             else:
@@ -302,27 +316,31 @@ if __name__ == "__main__":
             try:
                 if userInput[-3] == ":" and (len(userInput) == 5 or len(userInput) == 6):
                     if userInput[0] == "+":
-                        times2 = (datetime.datetime.now() + datetime.timedelta(hours=int(userInput[1:3]), minutes=int(userInput[4:6]))).strftime("%u.%H:%M:%S")
+                        times2 = (datetime.datetime.now() + datetime.timedelta(hours=int(userInput[1:3]),
+                                                                               minutes=int(userInput[4:6]))).strftime(
+                            "%u.%H:%M:%S")
                     else:
                         if datetime.datetime.now().hour < 12:
-                            times2 = datetime.datetime.now().replace(hour=int(userInput[0:2]), minute=int(userInput[3:5])).strftime("%u.%H:%M:%S")
+                            times2 = datetime.datetime.now().replace(hour=int(userInput[0:2]),
+                                                                     minute=int(userInput[3:5])).strftime("%u.%H:%M:%S")
                         else:
-                            times2 = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=int(userInput[0:2]), minute=int(userInput[3:5])).strftime("%u.%H:%M:%S")
+                            times2 = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(
+                                hour=int(userInput[0:2]), minute=int(userInput[3:5])).strftime("%u.%H:%M:%S")
                     print("set to", times2)
                 else:
                     print("invalid input")
             except:
                 print("invalid input (error)")
-            if relayState == False:
+            if not relayState:
                 time.sleep(3)
                 rl1.off()
             l2.off()
         else:
             iit = isItTime()
-            
-            if iit > 0 :
-                if skip == True:
-                    if iit != 1.5: # optimized and standard are skipped by one skip
+
+            if iit > 0:
+                if skip:
+                    if iit != 1.5:  # optimized and standard are skipped by one skip
                         skip = False
                     print("skipped #" + iit)
                     time.sleep(1)
