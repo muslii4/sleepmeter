@@ -131,19 +131,17 @@ def connectionTest():
             sheet = sheetsApi.getSheet()
             offlineMode = False
             print("connected to sheets")
+            return True
         except:
             print("could not connect to sheets")
             return False
     try:
-        url = "https://www.google.com/"
-        conn = urllib3.connection_from_url(url)
-        conn.request("GET", "/")
+        test = sheet.cell(0, 0).value
         offlineMode = False
-        print("connected to google")
         return True
     except:
         offlineMode = True
-        print("could not connect to google")
+        connectionTest()
         return False
 
 
