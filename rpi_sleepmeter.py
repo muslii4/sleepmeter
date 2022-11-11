@@ -4,7 +4,6 @@ import datetime
 import webbrowser
 import os
 import gpiozero
-import urllib3
 import multiprocessing
 import lib.configFile as configFile
 import lib.ledstrip as ledstrip
