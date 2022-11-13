@@ -140,7 +140,6 @@ def connectionTest():
         return True
     except:
         offlineMode = True
-        connectionTest()
         return False
 
 
@@ -264,6 +263,13 @@ if __name__ == "__main__":
                 doSkip()
                 time.sleep(3)
                 rl1.off()
+                continue
+            if b2.is_pressed:
+                if connectionTest():
+                    print("saving buffer")
+                    buffer.saveBufferOnline()
+                else:
+                    print("not connected")
                 continue
             l1.on()
             ledstrip.ledColor("highblue")
