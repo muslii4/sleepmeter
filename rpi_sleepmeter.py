@@ -226,7 +226,7 @@ if __name__ == "__main__":
                 time.sleep(3)
                 rl1.off()
                 continue
-            if b1.is_pressed:
+            elif b1.is_pressed:
                 print("6h sleep")
                 times2 = (datetime.datetime.now() + datetime.timedelta(hours=6, minutes=sleepDelay)).strftime(
                     "%u.%H:%M:%S")
@@ -240,6 +240,7 @@ if __name__ == "__main__":
             beep(0.1, 1, bz1)
             if connectionTest():
                 if buffer.isNotEmpty():
+                    print("saving buffer first")
                     buffer.saveAsleep()
                     saver = multiprocessing.Process(target=buffer.saveBufferOnline)
                     saver.start()
@@ -264,7 +265,7 @@ if __name__ == "__main__":
                 time.sleep(3)
                 rl1.off()
                 continue
-            if b2.is_pressed:
+            elif b2.is_pressed:
                 if connectionTest():
                     print("saving buffer")
                     buffer.saveBufferOnline()
