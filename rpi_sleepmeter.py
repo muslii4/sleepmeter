@@ -135,7 +135,7 @@ def connectionTest():
             print("could not connect to sheets")
             return False
     try:
-        test = sheet.cell(0, 0).value
+        test = sheet.cell(1, 1).value
         offlineMode = False
         return True
     except:

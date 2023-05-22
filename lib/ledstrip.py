@@ -13,18 +13,18 @@ setColor = ""
 ser = serial.Serial(config["led"]["port"], 9600, timeout=1)
 colors = {"highblue": config["led"]["colors"]["lowblue"], "lowblue": config["led"]["colors"]["lowblue"], "none": "000000000"}
 
+def write(val):
+    ser.write((val + "\n").encode())
+
 def init():
     global setColor
-    ser.flush()
-    time.sleep(1.5)
-
-    ser.write("255000000".encode())
-    time.sleep(1.3)
-    ser.write("000255000".encode())
-    time.sleep(1.3)
-    ser.write("000000255".encode())
-    time.sleep(1.3)
-    ser.write("000000000".encode())
+    write("255000000")
+    time.sleep(0.3)
+    write("000255000")
+    time.sleep(0.3)
+    write("000000255")
+    time.sleep(0.3)
+    write("000000000")
 
     setColor = "000000000"
 
@@ -53,7 +53,7 @@ def ledColor(color):
     global setColor
     if color in colors: 
         color = colors[color]
-    ser.write(color.encode())
+    write(color)
     setColor = color
     with open(config["led"]["file"], "w") as f:
         f.write(color)
